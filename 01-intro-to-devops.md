@@ -1,5 +1,5 @@
 # Introduction to DevOps
-In DevOps, it is not just about learning technologies and tools, it's also about integrating them together. 
+In DevOps, it is not just about learning technologies and tools, it's also about integrating them together. It is a philosophy of combining dev & ops team at culture, practice and tool level. 
 
 For a long time, IT industry is divided into two zones: `development` (developers, testers, build and release) and `operations` (Delivering the software and its features to the end users, like system administrators, cloud engineers). Over the period of time, because of Agile and other methodologies, `development has become very fast, but the operation is still slow`. So the software and its feature are not getting delivered as fast as it's getting developed. `DevOps solves this problem of delivery`. Whenever you have code and end user, you need DevOps. 
 
@@ -27,7 +27,7 @@ DevOps Lifecycle:
 Code (developers commits code) -> Code Build (Deployable software: Artifact) -> Code Test (Unit & Integration test) -> Code Analysis (Vulnerability, best practices) -> Delivery (Deploy changes to staging) -> DB/Security changes (Every other ops changes) -> Software Testing (QA/Functional, load, performance, tests) -> Deploy to Prod -> Go Live (User traffic diverted to new changes) -> User Approval (User Feedback) -> Keep Monitoring (DevOps Lifecycle)
 
 ## Continuous Integration (CI)
-Continuous integration is an automated process in DevOps, which generates software and its features quickly and efficiently. 
+Continuous integration is an automated process in DevOps, which generates software and its features quickly and efficiently. It is `the automation of code build and test`. 
 
 Traditionally, developers write code and work as a team. They store all this code at a version control system like Github. They pull an push code a few times a day (code changes happens continuously). This code will be moved to the build server to be built and tested, which generates the software (artifact at this stage), which is stored in a software repo. This artifact will be packaged in a specific format (war or jar in Java; DLL/EXE/MSI in Windows, etc). This artifact is then shipped to servers for further testing. Then after software testers approve, it can be shipped to production servers. 
 
@@ -49,23 +49,19 @@ Software repositories to store artifacts (such as Sonatype Nexus, JFrog Artifact
 Continuous integration tools that integrate everything (Such as Jenkins, CircleCI, TeamCity, Bamboo CI, Cruise Control).
 
 ## Continuous Delivery (CD)
+Continuous delivery is an automated process of delivering code changes to servers efficiently. It is a software development practice where `code changes are automatically prepared for a release to production`. It is the extension of continuous integration. 
 
+Ops team will get regular requests to deploy the artifacts generated from the CI process on servers for further testing. If the deployment fails, dev and ops team need to work together to fix it. A deployment would also include server provisioning, installing dependencies on servers, configuration changes, network or firewall rules changes, etc. Because CI is fast and happens regularly, ops team is flooded with such requests. After manual deployment, info will be sent to the AQ team for testing, and they will send info back. Problem: there is too much of human intervention and manual approval in this process. 
 
+Therefore every step in deployment should be automated. There are a lot of automation tools in the market:
+- Ansible, Puppet, Chef for system automation
+- Terraform, CFormation for cloud infra automation
+- Jenkins, Octopus Deploy for CICD automation
+- Helm Charts, Code Deploy, ...
 
+Software testing (functional, load, performance, databases, network and security tests, etc) also needs to be automated. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+Ops team will write automation code for deployment, and testers will write automation code for software testing, and sync with developer's source code. Now we have a process integrated with deployment automation, which then triggers software testing, all three teams (dev, test, ops) and processes are integrated together. 
 
 
 
