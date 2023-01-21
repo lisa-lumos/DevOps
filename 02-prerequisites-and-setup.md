@@ -59,7 +59,7 @@ Next, set up cloudwatch. Go to CloudWatch service, choose the region N. Virginia
 Next, create a public certificate tied to the domain that I purchased previously. Go to Certificate Manager in the console, take note of the region that we create certificate (N. Virginia in my case). This one is free. Request a certificate -> Request a public certificate -> Next -> Fully qualified domain name: *.lisa-lumos.com, select DNS validation, Tag key: Name, Tag value: lisa-lumos.com -> Request. Click the refresh icon to see the certificate, and its Status is Pending validation. Click on the Certificate ID, need to create the CNAME name and CNAME value as record on GoDaddy -> in GoDaddy, go to this domain name, and Manage DNS -> Add -> Type: CNAME, Name: ..., Value, ... -> Add record, make sure domain name do not duplicate. Refresh this certificate, if see the Status becomes Issued, then it is ready. 
 
 Sign out and try to sign in using root with MFA. Copy the alternative sign in url, 
-
+try to sin in with it. 
 
 
 
