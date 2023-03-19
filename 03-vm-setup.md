@@ -34,6 +34,8 @@ The most popular VM creation tool is Oracle VM Virtual box, but it doesn't suppo
 	
 4. Download & Install VMWare Fusion Tech Preview
   https://customerconnect.vmware.com/downloads/get-download?downloadGroup=FUS-PUBTP-2021H1
+  
+  if trial ends, for personal use: 1J23L-DHJ9N-N81JA-00224-38471
 
 5. Create link
   ln -s /Applications/VMWare\ Fusion\ Tech\ Preview.app /Applications/VMWare\ Fusion.app
@@ -67,12 +69,12 @@ The most popular VM creation tool is Oracle VM Virtual box, but it doesn't suppo
   Open terminal, Go to the folder where you created Vagrantfile & issue below command.
   vagrant up
   vagrant ssh
-          sudo -i
-          ip addr show # shows the ip of the vm
+  sudo -i # switch to root user
+  ip addr show # shows the ip of the vm
   exit
-          exit
-          vagrant status # check status of vm
-           vagrant halt # shut down the vm
+  exit
+  vagrant status # check status of vm
+  vagrant halt # shut down the vm
   vagrant destroy # delete the vm
 
 10. Create folder vms/fedora
@@ -96,15 +98,15 @@ The most popular VM creation tool is Oracle VM Virtual box, but it doesn't suppo
   Open Terminal, go to the folder where you created Vagrantfile & issue below command.
   vagrant up
   vagrant ssh
-          sudo -i
-          ip addr show
+  sudo -i
+  ip addr show
   exit
-          exit
-           vagrant halt
+  exit
+  vagrant halt
   vagrant destroy --force # force means do not ask any questions
 ```
 Windows user have option for many other boxes compared to Mac M series chips. 
 
-
+For centOS 7, use `config.vm.box = "centos/7"`. But cannot start it on Mac M1. 
 
 
