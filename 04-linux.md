@@ -183,12 +183,95 @@ root@vagrant:/# free -m
 Mem:            719         175         162           1         381         451
 Swap:          1437          54        1383
 
+root@vagrant:~# whoami
+root
+root@vagrant:~# exit
+logout
+vagrant@vagrant:~$ whoami
+vagrant
+vagrant@vagrant:~$ ls
+vagrant@vagrant:~$ pwd
+/home/vagrant
+vagrant@vagrant:~$ mkdir dev
+vagrant@vagrant:~$ mkdir ops backupdir
+vagrant@vagrant:~$ ls
+backupdir  dev  ops
+vagrant@vagrant:~$ touch testfile1.txt
+vagrant@vagrant:~$ ls
+backupdir  dev  ops  testfile1.txt
+vagrant@vagrant:~$ touch devopsfile{1..10}.txt # multiplication from 1 to 10
+vagrant@vagrant:~$ ls
+backupdir  devopsfile10.txt  devopsfile2.txt  devopsfile4.txt  devopsfile6.txt  devopsfile8.txt  ops
+dev        devopsfile1.txt   devopsfile3.txt  devopsfile5.txt  devopsfile7.txt  devopsfile9.txt  testfile1.txt
+vagrant@vagrant:~$ cp devopsfile1.txt dev/ # copy this file to this dir
+vagrant@vagrant:~$ ls dev/
+devopsfile1.txt
+vagrant@vagrant:~$ ls /home/vagrant/dev/
+devopsfile1.txt
+vagrant@vagrant:~$ cd /tmp/
+vagrant@vagrant:/tmp$ cp /home/vagrant/devopsfile2.txt /home/vagrant/dev/ # using absolute path is a good practice
+vagrant@vagrant:/tmp$ ls /home/vagrant/dev/
+devopsfile1.txt  devopsfile2.txt
+vagrant@vagrant:~$ cp -r dev backupdir/ # copy a directory into a directory. "-r" is one of the options, "cp" is the command, and "dev backupdir/" are arguments
+vagrant@vagrant:~$ ls backupdir/
+dev
+vagrant@vagrant:~$ cp --help
+Usage: cp [OPTION]... [-T] SOURCE DEST
+  or:  cp [OPTION]... SOURCE... DIRECTORY
+  or:  cp [OPTION]... -t DIRECTORY SOURCE...
+Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.
 
+Mandatory arguments to long options are mandatory for short options too.
+  -a, --archive                same as -dR --preserve=all
+      --attributes-only        don't copy the file data, just the attributes
+      --backup[=CONTROL]       make a backup of each existing destination file
+  -b                           like --backup but does not accept an argument
+...
+
+vagrant@vagrant:~$ mv devopsfile3.txt ops/ # move a file to a dir
+vagrant@vagrant:~$ mv ops dev/ # move a dir into a dir
+mv testfile1.txt testfile22.txt # rename this file
+vagrant@vagrant:~$ mkdir textdir
+vagrant@vagrant:~$ mv *.txt textdir/ # move all files ends with .txt to this dir
+vagrant@vagrant:~$ ls
+backupdir  dev  textdir
+vagrant@vagrant:~$ cd textdir/
+vagrant@vagrant:~/textdir$ ls
+devopsfile10.txt  devopsfile2.txt  devopsfile5.txt  devopsfile7.txt  devopsfile9.txt
+devopsfile1.txt   devopsfile4.txt  devopsfile6.txt  devopsfile8.txt  testfile22.txt
+vagrant@vagrant:~/textdir$ rm devopsfile10.txt # remove this file
+vagrant@vagrant:~/textdir$ ls
+devopsfile1.txt  devopsfile4.txt  devopsfile6.txt  devopsfile8.txt  testfile22.txt
+devopsfile2.txt  devopsfile5.txt  devopsfile7.txt  devopsfile9.txt
+vagrant@vagrant:~/textdir$ mkdir mobile
+vagrant@vagrant:~/textdir$ rm -r mobile # remove a dir
+vagrant@vagrant:~/textdir$ rm -rf * # dangerous, remove everything from current dir, cannot recover deleted data
 
 ```
 
+Editors. vim is enhanced vi editor. If not already installed, `sudo apt-get install vim`. `vim firstfile.txt` to create a new file, hit "i" to go to insert mode, type some text contents, and hit "esc" key to exit insert mode into command mode, type ":w" to save current edits. ":q" to quit vim, or ":wq" to save and quit at the same time. In vim, "o" can insert a new line at the bottom of the file. ":q!" to discard changes and quit. ":se nu" will show line numbers. "shift+j" goes to the bottom of file. "jj" goes to the top of file. "dd" to delete current line, "u" to undo. "/network" searches for network, "n" goes to the next search match. 
+```console
+vagrant@vagrant:~$ vim firstfile.txt
+vagrant@vagrant:~$ cat firstfile.txt # view the file
+Welcome to Linux. 
+This is a new line.
+vagrant@vagrant:~$ vim firstfile.txt
+vagrant@vagrant:~$ cat firstfile.txt 
+Welcome to Linux. 
+This is a new line. 
+This is cool.
 
 
+
+
+
+
+
+
+
+
+
+```
 
 
 
