@@ -260,24 +260,115 @@ vagrant@vagrant:~$ cat firstfile.txt
 Welcome to Linux. 
 This is a new line. 
 This is cool.
-
-
-
-
-
-
-
-
-
-
-
 ```
 
+Types of files in Linux:
+| Syntax      | First char in file listing | description
+| ----------- | ----------- | ----------- |
+| regular file | - | normal files such as text, data, or executable files |
+| directory | d | files that are lists of other files |
+| link | l | a shortcut that points to the location of the actual file |
+| special file | c | mechanism used for input and output, such as files /dev |
+| socket | s | a special file that provides inter-process networking protected by the file system's access control |
+| pipe | p | a special file that allows processes to communicate with each other without using network socket semantics |
 
+```console
+vagrant@vagrant:~$ sudo -i
+root@vagrant:~# whoami
+root
+root@vagrant:~# ls -l # l means long listing
+total 4
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+root@vagrant:~# mkdir devopsdir
+root@vagrant:~# ls -l
+total 8
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+root@vagrant:~# touch test.txt
+root@vagrant:~# ls -l # the last row starts with a dash, means it is an actual file; first two rows start with a d, means they are directories
+total 8
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root    0 Mar 23 23:03 test.txt
+root@vagrant:~# vim test.txt # add some text into this file
+root@vagrant:~# file test.txt # shows it is ascii text file
+test.txt: ASCII text
+root@vagrant:~# cd /bin
+root@vagrant:/bin# file apt-get # result shows it is a binary file
+apt-get: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=14b73cbee4048e51aadefd2f632143b0962168dd, for GNU/Linux 3.7.0, stripped
+root@vagrant:~# cd
+root@vagrant:~# file devopsdir/
+devopsdir/: directory
+root@vagrant:~# cd /dev
+root@vagrant:/dev# ls -l # first row starts with c, means keyboard character device; third row starts with b, means it is the hard disk, b means block file; 4th row starts with l, means link, see the -> sign, which points to the orignal file
+total 0
+crw-r--r-- 1 root root     10, 235 Mar 23 03:31 autofs
+drwxr-xr-x 2 root root         320 Mar 22 21:29 block
+brw-rw---- 1 root disk    253,   0 Mar 23 03:31 dm-0
+lrwxrwxrwx 1 root root           3 Mar 23 03:31 dvd -> sr0
+...
 
-
-
-
+root@vagrant:~# cd
+root@vagrant:~# ls
+devopsdir  snap  test.txt
+root@vagrant:~# mkdir -p /opt/dev/ops/devops/test # create a directory tree, whether already exists or not exists
+root@vagrant:~# vim /opt/dev/ops/devops/test/commands.txt # create a new file
+root@vagrant:~# cat /opt/dev/ops/devops/test/commands.txt
+ls
+pwd
+whoami
+cd
+uptime
+touch
+mkdir
+root@vagrant:~# ln -s /opt/dev/ops/devops/test/commands.txt cmds # create a link, s means soft link
+root@vagrant:~# ls -l
+total 12
+lrwxrwxrwx 1 root root   37 Mar 23 23:24 cmds -> /opt/dev/ops/devops/test/commands.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+root@vagrant:~# mv /opt/dev/ops/devops/test/commands.txt /tmp/
+root@vagrant:~# ls -l # first row highlights in red, because it now points to a file that does not exist. 
+total 12
+lrwxrwxrwx 1 root root   37 Mar 23 23:24 cmds -> /opt/dev/ops/devops/test/commands.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+root@vagrant:~# mv /tmp/commands.txt /opt/dev/ops/devops/test/
+root@vagrant:~# ls -l # moved it back, the highlights are gone
+total 12
+lrwxrwxrwx 1 root root   37 Mar 23 23:24 cmds -> /opt/dev/ops/devops/test/commands.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+root@vagrant:~# unlink cmds # removes the link file
+root@vagrant:~# ls -l # link is gone
+total 12
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+root@vagrant:~# ln -s /opt/dev/ops/devops/test/commands.txt cmds
+root@vagrant:~# ls -l # by default, sort by file name
+total 12
+lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/commands.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+root@vagrant:~# ls -lt # sort by timestamp, latest first
+total 12
+lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/commands.txt
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+root@vagrant:~# ls -ltr # sort by timestamp, newest first
+total 12
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+-rw-r--r-- 1 root root   22 Mar 23 23:05 test.txt
+lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/commands.txt
+root@vagrant:~# history # list the history commands
+```
 
 
 
