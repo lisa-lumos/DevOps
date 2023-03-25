@@ -249,7 +249,9 @@ vagrant@vagrant:~/textdir$ rm -rf * # dangerous, remove everything from current 
 
 ```
 
-Editors. vim is enhanced vi editor. If not already installed, `sudo apt-get install vim`. `vim firstfile.txt` to create a new file, hit "i" to go to insert mode, type some text contents, and hit "esc" key to exit insert mode into command mode, type ":w" to save current edits. ":q" to quit vim, or ":wq" to save and quit at the same time. In vim, "o" can insert a new line at the bottom of the file. ":q!" to discard changes and quit. ":se nu" will show line numbers. "shift+j" goes to the bottom of file. "jj" goes to the top of file. "dd" to delete current line, "u" to undo. "/network" searches for network, "n" goes to the next search match. 
+Editors
+
+vim is enhanced vi editor. If not already installed, `sudo apt-get install vim`. `vim firstfile.txt` to create a new file, hit "i" to go to insert mode, type some text contents, and hit "esc" key to exit insert mode into command mode, type ":w" to save current edits. ":q" to quit vim, or ":wq" to save and quit at the same time. In vim, "o" can insert a new line at the bottom of the file. ":q!" to discard changes and quit. ":se nu" will show line numbers. "shift+j" goes to the bottom of file. "jj" goes to the top of file. "dd" to delete current line, "u" to undo. "/network" searches for network, "n" goes to the next search match. In command mode, `:%s/word1/word2` replaces the first word1 into word2 in each line in the file. `:%s/word1/word2/g` replaces all occurances of word1 into word2 in the file (g means global). `:%s/word1//g` removes all occurances of word1 in the file.
 ```console
 vagrant@vagrant:~$ vim firstfile.txt
 vagrant@vagrant:~$ cat firstfile.txt # view the file
@@ -370,12 +372,79 @@ lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/comman
 root@vagrant:~# history # list the history commands
 ```
 
+Filter
 
+```console
+root@vagrant:~# ls -l
+total 16
+lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/commands.txt
+drwxr-xr-x 2 root root 4096 Mar 23 23:01 devopsdir
+drwxr-xr-x 3 root root 4096 Oct 28  2021 snap
+-rw-r--r-- 1 root root 5014 Mar 25 02:22 test.txt
+root@vagrant:~# grep necessitatibus test.txt # find lines contain this keyword in this file, grep is case-sensitive
+Ut illo praesentium est doloribus quas qui molestias omnis hic tempora temporibus sit omnis voluptas qui reiciendis laboriosam qui repellendus omnis? Qui labore totam et quibusdam ratione eum voluptatum fugiat non dignissimos accusantium non facere illum est quia culpa. Rem possimus dolores sit necessitatibus labore et repellendus distinctio aut neque molestiae non ullam Quis!
+Ut ipsa accusamus non harum maiores non necessitatibus velit ut dolore esse sed quidem molestiae. Aut sapiente nesciunt et dolores tenetur et quae facere quo atque omnis ut illo accusantium cum voluptatem voluptate.
+Et recusandae voluptatem vel numquam debitis et consequatur laborum ut quibusdam porro ut maxime dolorem non nulla blanditiis. Et harum dolorem eum galisum modi ut delectus necessitatibus et voluptas fuga.
+root@vagrant:~# grep -i Necessitatibus test.txt # -i means ignore case-sensitivity
+Ut illo praesentium est doloribus quas qui molestias omnis hic tempora temporibus sit omnis voluptas qui reiciendis laboriosam qui repellendus omnis? Qui labore totam et quibusdam ratione eum voluptatum fugiat non dignissimos accusantium non facere illum est quia culpa. Rem possimus dolores sit necessitatibus labore et repellendus distinctio aut neque molestiae non ullam Quis!
+Ut ipsa accusamus non harum maiores non necessitatibus velit ut dolore esse sed quidem molestiae. Aut sapiente nesciunt et dolores tenetur et quae facere quo atque omnis ut illo accusantium cum voluptatem voluptate.
+Et recusandae voluptatem vel numquam debitis et consequatur laborum ut quibusdam porro ut maxime dolorem non nulla blanditiis. Et harum dolorem eum galisum modi ut delectus necessitatibus et voluptas fuga.
+root@vagrant:~# ls
+cmds  devopsdir  snap  test2.txt  test.txt
+root@vagrant:~# grep -i necessitatibus * # find keywords in all files in current dir, will ignore nested files in this directory
+grep: devopsdir: Is a directory
+grep: snap: Is a directory
+test2.txt:Ut illo praesentium est doloribus quas qui molestias omnis hic tempora temporibus sit omnis voluptas qui reiciendis laboriosam qui repellendus omnis? Qui labore totam et quibusdam ratione eum voluptatum fugiat non dignissimos accusantium non facere illum est quia culpa. Rem possimus dolores sit necessitatibus labore et repellendus distinctio aut neque molestiae non ullam Quis!
+test2.txt:Ut ipsa accusamus non harum maiores non necessitatibus velit ut dolore esse sed quidem molestiae. Aut sapiente nesciunt et dolores tenetur et quae facere quo atque omnis ut illo accusantium cum voluptatem voluptate.
+test2.txt:Et recusandae voluptatem vel numquam debitis et consequatur laborum ut quibusdam porro ut maxime dolorem non nulla blanditiis. Et harum dolorem eum galisum modi ut delectus necessitatibus et voluptas fuga.
+test.txt:Ut illo praesentium est doloribus quas qui molestias omnis hic tempora temporibus sit omnis voluptas qui reiciendis laboriosam qui repellendus omnis? Qui labore totam et quibusdam ratione eum voluptatum fugiat non dignissimos accusantium non facere illum est quia culpa. Rem possimus dolores sit necessitatibus labore et repellendus distinctio aut neque molestiae non ullam Quis!
+test.txt:Ut ipsa accusamus non harum maiores non necessitatibus velit ut dolore esse sed quidem molestiae. Aut sapiente nesciunt et dolores tenetur et quae facere quo atque omnis ut illo accusantium cum voluptatem voluptate.
+test.txt:Et recusandae voluptatem vel numquam debitis et consequatur laborum ut quibusdam porro ut maxime dolorem non nulla blanditiis. Et harum dolorem eum galisum modi ut delectus necessitatibus et voluptas fuga.
+root@vagrant:~# root@vagrant:~# grep -iR necessitatibus * # find keywords in all files in current dir, R means will also search nested files in this directory
+...
+root@vagrant:~# grep -R SELINUX /etc/* # find this keyword recursively (includes nested files) in all files in /etc/ directory. Can be used to find parameter names for a certain configuration in setting files. Great for sys admins, so they do not need to remember things. 
+root@vagrant:~# grep -vi firewall test.txt # reverse search: show all rows that do not contain this keyword in this file, case-insensitive
+root@vagrant:~# less test.txt # file reader, up and down arrow to navigatge, q to quit
+root@vagrant:~# more test.txt # file reader, show percentage, use enter key to navigate, q to quit
+root@vagrant:~# head test.txt # show first 10 lines of this file
+root@vagrant:~# head -20 test.txt  # show first 20 lines of this file
+root@vagrant:~# tail test.txt # show last 10 lines of this file
+root@vagrant:~# tail --20 test.txt # show last 20 lines of this file
+root@vagrant:~# tail -f test.txt # show dynamic contents of this file, control+c to quit. Useful to view log files for troubleshooting a server - you see errors in log files, such as /var/log/syslog file. Every service have their own log file. 
+root@vagrant:~# cat /etc/passwd # this file contain all users info, segragated into rows, and rows have columns separated by colon(:), as delimiters. First row first column is username
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+...
+root@vagrant:~# cut -d: -f1 /etc/passwd # extract first col of each row in this file. -d: means delimiter is colon, -f1 means field 1 (first column)
+root
+daemon
+bin
+sys
+sync
+...
+root@vagrant:~# cut -d: -f3 /etc/passwd # extract third column, which means userid in this file
+0
+1
+2
+3
+4
+...
+root@vagrant:~# awk -F':' '{print $1}' /etc/passwd # use awk command, if your file do not have proper delimters, then can use regex. This command also gets the first column of the file. awk is much more powerful than cut command, with a lot more options. 
+root
+daemon
+bin
+sys
+sync
+...
+root@vagrant:~# sed 's/word1/word2/g' test.txt # replaces all occurances of word1 to word2 in this file, print on screen the result, do not actually edit the file
+root@vagrant:~# sed 's/word1/word2/g' * # replaces all occurances of word1 to word2 in all files in cur dir, print on screen the result, do not actually edit the files
+root@vagrant:~# sed -i 's/word1/word2/g' test.txt # replaces all occurances of word1 to word2 in this file. Can be used without -i first to view the potential changes. Then actually apply the changes with -i. 
+```
 
-
-
-
-
+Redirections
 
 
 
