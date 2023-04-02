@@ -446,11 +446,155 @@ root@vagrant:~# sed -i 's/word1/word2/g' test.txt # replaces all occurances of w
 
 Redirections
 
+```console
+[vagrant@bazinga ~]$ uptime > /tmp/sysinfo.txt # redirect output into this file, if not exist, creat it
+[vagrant@bazinga ~]$ cat /tmp/sysinfo.txt
+ 11:22:02 up 6 min,  1 user,  load average: 0.09, 0.05, 0.01
+[vagrant@bazinga ~]$ ls > /tmp/sysinfo.txt # overwrite this file if exists
+[vagrant@bazinga ~]$ cat /tmp/sysinfo.txt
+[vagrant@bazinga ~]$ uptime >> /tmp/sysinfo.txt # append to this file only
+[vagrant@bazinga ~]$ cat /tmp/sysinfo.txt
+ 11:24:18 up 8 min,  1 user,  load average: 0.05, 0.07, 0.01
+ [vagrant@bazinga ~]$ free -m # shows memory utilization
+               total        used        free      shared  buff/cache   available
+Mem:            1950         224        1535           0         190        1701
+Swap:           1949           0        1949
+[vagrant@bazinga ~]$ df -h # shows disk partition utilization
+Filesystem                        Size  Used Avail Use% Mounted on
+devtmpfs                          4.0M     0  4.0M   0% /dev
+tmpfs                             976M     0  976M   0% /dev/shm
+tmpfs                             391M  708K  390M   1% /run
+/dev/mapper/fedora_fedora35-root   15G  2.0G   13G  14% /
+/dev/nvme0n1p2                   1014M  148M  867M  15% /boot
+/dev/nvme0n1p1                    599M  5.9M  593M   1% /boot/efi
+tmpfs                             196M     0  196M   0% /run/user/1000
+[vagrant@bazinga ~]$ echo "Good morning! " # print on the screen
+Good morning! 
+[vagrant@bazinga ~]$ echo "#####################" > /tmp/sysinfo.txt # print to file
+[vagrant@bazinga ~]$ cat /tmp/sysinfo.txt
+#####################
+[vagrant@bazinga ~]$ date > /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ echo "#####################" >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ uptime >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ echo "#####################" >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ free -m >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ echo "#####################" >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ df -h >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ echo "#####################" >> /tmp/sysinfo.txt 
+[vagrant@bazinga ~]$ cat /tmp/sysinfo.txt
+Sun Apr  2 11:29:31 AM PDT 2023
+#####################
+ 11:30:22 up 14 min,  1 user,  load average: 0.00, 0.02, 0.00
+#####################
+               total        used        free      shared  buff/cache   available
+Mem:            1950         223        1536           0         190        1702
+Swap:           1949           0        1949
+#####################
+Filesystem                        Size  Used Avail Use% Mounted on
+devtmpfs                          4.0M     0  4.0M   0% /dev
+tmpfs                             976M     0  976M   0% /dev/shm
+tmpfs                             391M  708K  390M   1% /run
+/dev/mapper/fedora_fedora35-root   15G  2.0G   13G  14% /
+/dev/nvme0n1p2                   1014M  148M  867M  15% /boot
+/dev/nvme0n1p1                    599M  5.9M  593M   1% /boot/efi
+tmpfs                             196M     0  196M   0% /run/user/1000
+#####################
 
+[root@bazinga ~]# echo "This message goes into a black hole" > /dev/null 
+[root@bazinga ~]# cat /dev/null # nothing is there
+[root@bazinga ~]# cat /dev/null > /tmp/sysinfo.txt # put content in black hole into this file, which clears this file contents. Handy in bash scripting
+[root@bazinga ~]# cat /tmp/sysinfo.txt
+[root@bazinga ~]# freeeeee -m > /dev/null # if command contains error, it will not go to balck hole, as error will be print on the screen
+-bash: freeeeee: command not found
+[root@bazinga ~]# freeeeee -m 2> /tmp/error.log # 2 means redirect standard error
+[root@bazinga ~]# cat /tmp/error.log 
+-bash: freeeeee: command not found
+[root@bazinga ~]# freeeeee -m &> /tmp/anything.log # & means redirect any output, whether error or normal output
+[root@bazinga ~]# ls /var/log/ # processes running behind the scene generates output here; handy in bash script because we run them in the background, and can view the output later
+anaconda         dnf.log      lastlog  tallylog                vmware-vmsvc-root.log
+audit            dnf.rpm.log  private  tuned                   vmware-vmtoolsd-root.log
+btmp             firewalld    README   vmware-network.1.log    wtmp
+chrony           hawkey.log   sa       vmware-network.log
+dnf.librepo.log  journal      sssd     vmware-vgauthsvc.log.0
 
+[root@bazinga ~]# wc -l /etc/passwd # return line number in this file
+25 /etc/passwd
+[root@bazinga ~]# wc -l < /etc/passwd # the input to this cmd comes from this file
+25
+[root@bazinga ~]# cd /etc
+[root@bazinga etc]# ls | wc -l # result of ls cmd pipes into the wc cmd, returns total num of files in cur path
+167
+[root@bazinga etc]# ls | grep host # grab all filenames in cur path start with host
+host.conf
+hostname
+hosts
+[root@bazinga etc]# tail /var/log/vmware-vmsvc-root.log | grep warning # from last 10 lines of this file, search for text warning
+[2023-04-02T18:35:12.419Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:40:12.234Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:40:12.334Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:40:12.435Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:45:12.253Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:45:12.354Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:45:12.456Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:50:12.270Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:50:12.371Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
+[2023-04-02T18:50:12.473Z] [ warning] [vmsvc] [740] SimpleSock: Couldn't get VMCI socket family info.
 
+[root@bazinga etc]# free -m
+               total        used        free      shared  buff/cache   available
+Mem:            1950         224        1309           0         416        1701
+Swap:           1949           0        1949
+[root@bazinga etc]# free -m | grep Mem
+Mem:            1950         224        1309           0         416        1701
 
+[root@bazinga etc]# ls -l | tail # show last 10 files
+-rw-r--r--.  1 root root       32 Feb 23  2022 vagrant_box_build_time
+-rw-r--r--.  1 root root       28 Feb 23  2022 vconsole.conf
+-rw-r--r--.  1 root root     4017 Feb 21  2022 vimrc
+-rw-r--r--.  1 root root     1183 Feb 21  2022 virc
+drwxr-xr-x.  4 root root     4096 Feb 23  2022 vmware-tools
+-rw-r--r--.  1 root root     4925 Oct 19  2021 wgetrc
+drwxr-xr-x.  6 root root       70 Feb 23  2022 X11
+-rw-r--r--.  1 root root      817 Jul 21  2021 xattr.conf
+drwxr-xr-x.  4 root root       38 Feb 23  2022 xdg
+drwxr-xr-x.  2 root root     4096 Feb 23  2022 yum.repos.d
 
+[root@bazinga etc]# ls -l | head # show first 10 files
+total 1064
+-rw-r--r--.  1 root root       18 Feb 23  2022 adjtime
+-rw-r--r--.  1 root root     1529 Jul 16  2021 aliases
+drwxr-xr-x.  2 root root     4096 Feb 23  2022 alternatives
+drwxr-x---.  4 root root      100 Feb 14  2022 audit
+drwxr-xr-x.  2 root root        6 Jul 21  2021 bash_completion.d
+-rw-r--r--.  1 root root     2917 Jul 16  2021 bashrc
+-rw-r--r--.  1 root root      535 Jul 22  2021 bindresvport.blacklist
+drwxr-xr-x.  2 root root        6 Jan 12  2022 binfmt.d
+drwxr-xr-x.  2 root root        6 Jul 23  2021 chkconfig.d
+
+[root@bazinga etc]# find /etc -name hostname # find filename in this path
+/etc/hostname
+[root@bazinga etc]# find / -name hostname # search in rood dir, not recommended, it is realtime search
+/proc/sys/kernel/hostname
+/etc/hostname
+/var/lib/selinux/targeted/active/modules/100/hostname
+/usr/bin/hostname
+/usr/lib64/gettext/hostname
+/usr/share/licenses/hostname
+/usr/share/doc/hostname
+/usr/libexec/hostname
+
+[root@bazinga etc]# yum install mlocate -y
+[root@bazinga etc]# updatedb
+[root@bazinga etc]# locate host # not real time search, will not reflect changes unless you run updatedb command
+/dev/vhost-net
+/dev/vhost-vsock
+/etc/host.conf
+/etc/hostname
+/etc/hosts
+...
+```
+
+Users and groups
 
 
 
