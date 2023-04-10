@@ -596,6 +596,58 @@ drwxr-xr-x.  2 root root        6 Jul 23  2021 chkconfig.d
 
 Users and groups
 
+They are used to control access to files. 
+
+Every file on the system is owened by a user and associated with a group. Every process has a owner and group affiliation, and can only access files its owner and group can access. 
+
+Every user of the system is assigned a unique user ID number (UID); username and UID are stored in `etc/passwd`; user's password is stored in `etc/shadow` in encrypted form. Users are assigned a home directory and a program that is run when they login (usually a shell). Users cannot read, write or execute each other's files without permission. 
+
+Types of use: 
+- root user. user id: 0; group id: 0; home dir: `/root`; shell: `/bin/bash`
+- regualr user. user id: 1k to 10k; group id: 1k to 60k; home dir: `home/username`; shell: `/bin/bash`
+- service user. user id: 0 to 999; group id: 0 to 999; home dir: `/var/ftp` etc; shell: `/sbin/nologin`
+
+```console
+[root@bazinga ~]# head -1 /etc/passwd # username:shadowfile:userid:groupid:comment:homedir:shell
+root:x:0:0:root:/root:/bin/bash
+[root@bazinga ~]# grep vagrant /etc/passwd
+vagrant:x:1000:1000::/home/vagrant:/bin/bash
+[root@bazinga ~]# cat /etc/group # shows group name and group ids
+root:x:0:
+bin:x:1:
+...
+[root@bazinga ~]# id vagrant # the id command
+uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant)
+
+[root@bazinga ~]# useradd ansible
+[root@bazinga ~]# useradd jenkins
+[root@bazinga ~]# useradd aws
+[root@bazinga ~]# tail -3 /etc/passwd
+ansible:x:1001:1001::/home/ansible:/bin/bash
+jenkins:x:1002:1002::/home/jenkins:/bin/bash
+aws:x:1003:1003::/home/aws:/bin/bash
+[root@bazinga ~]# tail -3 /etc/group
+ansible:x:1001:
+jenkins:x:1002:
+aws:x:1003:
+[root@bazinga ~]# id ansible
+uid=1001(ansible) gid=1001(ansible) groups=1001(ansible)
+[root@bazinga ~]# groupadd devops
+[root@bazinga ~]# usermod -aG devops ansible # G means secondary group, g means primary group
+[root@bazinga ~]# id ansible # now this username is in devops groups
+uid=1001(ansible) gid=1001(ansible) groups=1001(ansible),1004(devops)
+[root@bazinga ~]# grep devops /etc/group # see user ansible now in devops group
+devops:x:1004:ansible
+
+
+
+
+
+
+
+```
+
+
 
 
 
