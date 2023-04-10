@@ -638,13 +638,50 @@ uid=1001(ansible) gid=1001(ansible) groups=1001(ansible)
 uid=1001(ansible) gid=1001(ansible) groups=1001(ansible),1004(devops)
 [root@bazinga ~]# grep devops /etc/group # see user ansible now in devops group
 devops:x:1004:ansible
+[root@bazinga ~]# vim /etc/group # can also append users in the file directly like this: devops:x:1004:ansible,jenkins,aws
+[root@bazinga ~]# id aws
+uid=1003(aws) gid=1003(aws) groups=1003(aws),1004(devops)
+[root@bazinga ~]# passwd ansible # add/reset pwd for this user
+Changing password for user ansible.
+New password: 
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@bazinga ~]# su - ansible # root user can directly access other users
+[ansible@bazinga ~]$ whoami
+ansible
+[ansible@bazinga ~]$ su - aws # regular user need pwd to switch to a diff user
+Password: 
+[aws@bazinga ~]$ exit
+logout
+[ansible@bazinga ~]$ exit # go back to root user
+logout
 
+[root@bazinga ~]# last # shows login info
+vagrant  pts/0        192.168.211.1    Sun Apr  2 11:15    gone - no logout
+reboot   system boot  5.16.9-200.fc35. Sun Apr  2 12:15   still running
+reboot   system boot  5.16.9-200.fc35. Thu Feb 24 06:39 - 22:40  (-7:58)
+reboot   system boot  5.16.9-200.fc35. Thu Feb 24 06:37 - 22:39  (-7:58)
+reboot   system boot  5.14.10-300.fc35 Thu Feb 24 06:33 - 22:37  (-7:56)
+wtmp begins Thu Feb 24 06:33:19 2022
 
+[root@bazinga ~]# who # shows current user
+vagrant  pts/0        2023-04-02 11:15 (192.168.211.1)
+[root@bazinga ~]# lsof -u vagrant # list all the open file by this user
+COMMAND   PID    USER   FD      TYPE             DEVICE SIZE/OFF       NODE NAME
+systemd   908 vagrant  cwd       DIR              253,0      224        128 /
+systemd   908 vagrant  rtd       DIR              253,0      224        128 /
+systemd   908 vagrant  txt       REG              253,0  1857504   26061772 /usr/lib/systemd/systemd
+...
+[root@bazinga ~]# lsof -u aws # can indicate what this user is doing
 
-
-
-
-
+[root@bazinga ~]# userdel aws # delete the user, but its homedir still exits
+[root@bazinga ~]# ls /home/
+ansible  aws  jenkins  vagrant
+[root@bazinga ~]# userdel -r jenkins # delete the user and its home dir
+[root@bazinga ~]# ls /home/
+ansible  aws  vagrant
+[root@bazinga ~]# groupdel devops # delete the group
 ```
 
 
