@@ -249,7 +249,7 @@ vagrant@vagrant:~/textdir$ rm -rf * # dangerous, remove everything from current 
 
 ```
 
-Editors
+## Editors
 
 vim is enhanced vi editor. If not already installed, `sudo apt-get install vim`. `vim firstfile.txt` to create a new file, hit "i" to go to insert mode, type some text contents, and hit "esc" key to exit insert mode into command mode, type ":w" to save current edits. ":q" to quit vim, or ":wq" to save and quit at the same time. In vim, "o" can insert a new line at the bottom of the file. ":q!" to discard changes and quit. ":se nu" will show line numbers. "shift+j" goes to the bottom of file. "jj" goes to the top of file. "dd" to delete current line, "u" to undo. "/network" searches for network, "n" goes to the next search match. In command mode, `:%s/word1/word2` replaces the first word1 into word2 in each line in the file. `:%s/word1/word2/g` replaces all occurances of word1 into word2 in the file (g means global). `:%s/word1//g` removes all occurances of word1 in the file.
 ```console
@@ -372,7 +372,7 @@ lrwxrwxrwx 1 root root   37 Mar 24 03:27 cmds -> /opt/dev/ops/devops/test/comman
 root@vagrant:~# history # list the history commands
 ```
 
-Filter
+## Filter
 
 ```console
 root@vagrant:~# ls -l
@@ -444,7 +444,7 @@ root@vagrant:~# sed 's/word1/word2/g' * # replaces all occurances of word1 to wo
 root@vagrant:~# sed -i 's/word1/word2/g' test.txt # replaces all occurances of word1 to word2 in this file. Can be used without -i first to view the potential changes. Then actually apply the changes with -i. 
 ```
 
-Redirections
+## Redirections
 
 ```console
 [vagrant@bazinga ~]$ uptime > /tmp/sysinfo.txt # redirect output into this file, if not exist, creat it
@@ -594,7 +594,7 @@ drwxr-xr-x.  2 root root        6 Jul 23  2021 chkconfig.d
 ...
 ```
 
-Users and groups
+## Users and groups
 
 They are used to control access to files. 
 
@@ -683,6 +683,66 @@ ansible  aws  jenkins  vagrant
 ansible  aws  vagrant
 [root@bazinga ~]# groupdel devops # delete the group
 ```
+
+
+## File permissions
+
+r means read, w means write, x means execute permission. When you do `ls -l`, in each result line, it starts with 1 + 3 + 3 + 3 characters, 1st character means file type, the next 3 groups of 3 chars means user permission, group permission and others permission (if there is a -, it means that permission is missing). For a directory, execute permission means you can do `cd`, and r means you can do `ls`, w means can make changes, such as deleting it. For a link file, the letters indicate your permissions for the link it self, not the actual file that it points to. 
+
+```console
+[vagrant@bazinga ~]$ ls -l /bin/login # first root is the root user, and second root is the root group
+-rwxr-xr-x. 1 root root 69848 Feb 14  2023 /bin/login # permissions: rwx for root user, rx for root group, and rx for others
+
+[root@bazinga ~]# useradd ansible
+[root@bazinga ~]# useradd jenkins
+[root@bazinga ~]# useradd aws
+[root@bazinga ~]# useradd miles
+[root@bazinga ~]# groupadd devops
+[root@bazinga ~]# vim /etc/group # append ansible,jenkins,aws
+[root@bazinga ~]# id ansible
+uid=1001(ansible) gid=1001(ansible) groups=1001(ansible),1004(devops)
+
+[root@bazinga ~]# mkdir /opt/devopsdir
+[root@bazinga ~]# ls -ld /opt/devopsdir
+drwxr-xr-x. 2 root root 6 Apr 22 11:02 /opt/devopsdir
+
+[root@bazinga ~]# chown ansible:devops /opt/devopsdir/ # change owner of this dir to ansible with group devops. could use -r flag to do recursively for all contents in this dir, but should be careful - hard to rollback. 
+[root@bazinga ~]# ls -ld /opt/devopsdir
+drwxr-xr-x. 2 ansible devops 6 Apr 22 11:02 /opt/devopsdir
+[root@bazinga ~]# chmod o-x /opt/devopsdir/ # for others (o), remove x permission (-x)
+[root@bazinga ~]# ls -ld /opt/devopsdir
+drwxr-xr--. 2 ansible devops 6 Apr 22 11:02 /opt/devopsdir
+[root@bazinga ~]# chmod o-r /opt/devopsdir/ # for others, remove r permission
+[root@bazinga ~]# ls -ld /opt/devopsdir
+drwxr-x---. 2 ansible devops 6 Apr 22 11:02 /opt/devopsdir
+[root@bazinga ~]# chmod g+w /opt/devopsdir/ # for this group, add w permission
+[root@bazinga ~]# ls -ld /opt/devopsdir
+drwxrwx---. 2 ansible devops 6 Apr 22 11:02 /opt/devopsdir
+
+[root@bazinga ~]# su - miles # this user cannot read/execute/modify it
+[miles@bazinga ~]$ ls /opt/devopsdir/
+ls: cannot open directory '/opt/devopsdir/': Permission denied
+[miles@bazinga ~]$ cd /opt/devopsdir/
+-bash: cd: /opt/devopsdir/: Permission denied
+[miles@bazinga ~]$ touch /opt/devopsdir/test.txt
+touch: cannot touch '/opt/devopsdir/test.txt': Permission denied
+[miles@bazinga ~]$ exit
+logout
+
+[root@bazinga ~]# su - aws # this user is part of the devops group, can do rwx
+[aws@bazinga ~]$ ls /opt/devopsdir/
+[aws@bazinga ~]$ cd /opt/devopsdir/
+[aws@bazinga devopsdir]$ touch test.txt
+```
+
+You can also use numbers to change permissions. Permissions are calculated by adding numbers for r/w/x. The sum is then used to specify all permissions for usr/group/others. This way is quick to grant permissions for all 3 of them. 
+
+## Sudo
+
+
+
+
+
 
 
 
