@@ -738,6 +738,83 @@ logout
 You can also use numbers to change permissions. Permissions are calculated by adding numbers for r/w/x. The sum is then used to specify all permissions for usr/group/others. This way is quick to grant permissions for all 3 of them. 
 
 ## Sudo
+sudo gives power to a normal user to execute commands owned by root user. If a normal user already has full sudo perivilege, it can become a root user anytime. 
+
+Vagrant user has privilege to start a command with sudo, and can switch to root user using `sudo -i`. 
+
+```console
+[root@bazinga ~]# whoami
+root
+[root@bazinga ~]# passwd ansible # set pwd for user ansible
+Changing password for user ansible.
+New password: 
+Retype new password: 
+passwd: all authentication tokens updated successfully.
+[root@bazinga ~]# su - ansible # switch to user ansible
+Last login: Sun Apr  9 23:00:19 PDT 2023 on pts/0
+[ansible@bazinga ~]$ whoami
+ansible
+[ansible@bazinga ~]$ sudo useradd test1 # cannot run sudo as normal usr
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for ansible: 
+ansible is not in the sudoers file.  This incident will be reported.
+[ansible@bazinga ~]$ sudo -i # cannot switch to root user
+[sudo] password for ansible: 
+ansible is not in the sudoers file.  This incident will be reported.
+
+[ansible@bazinga ~]$ exit
+logout
+
+[root@bazinga ~]# ls -l /etc/sudoers # the file to modify to add ansible to root, even root user do not have permission to write to this file. 
+-r--r-----. 1 root root 4375 Feb 23  2022 /etc/sudoers
+[root@bazinga ~]# visudo # add a new line "ansible ALL=(ALL)       ALL" after "root    ALL=(ALL)       ALL"
+[root@bazinga ~]# su - ansible
+Last login: Sun Apr 23 11:57:14 PDT 2023 on pts/0
+[ansible@bazinga ~]$ sudo -i # note that it asks for pwd, so it is interactive
+[sudo] password for ansible: 
+[root@bazinga ~]# exit
+logout
+[ansible@bazinga ~]$ whoami
+ansible
+[ansible@bazinga ~]$ exit
+logout
+[root@bazinga ~]# whoami
+root
+[root@bazinga ~]# visudo # add "NOPASSWD: " in front of the last ALL in the newly added line, so it becomes: "ansible ALL=(ALL)       NOPASSWD: ALL"
+[root@bazinga ~]# 
+
+[root@bazinga ~]# su - ansible
+Last login: Sun Apr 23 12:04:36 PDT 2023 on pts/0
+[ansible@bazinga ~]$ sudo -i # now no password asked
+[root@bazinga ~]# 
+```
+
+Note that most servers do not have root password set for security purpose. If you created an error in your sudoer file, you will be stuck. So the better alternative would be to create your own file in the `/etc/sudoer.d/` directory. 
+
+To add all users in devops group into the sudoers file:
+```console
+[root@bazinga ~]# cd /etc/sudoers.d
+[root@bazinga sudoers.d]# ls
+vagrant
+[root@bazinga sudoers.d]# cat vagrant 
+Defaults:vagrant !fqdn
+Defaults:vagrant !requiretty
+vagrant ALL=(ALL) NOPASSWD: ALL
+[root@bazinga sudoers.d]# cp vagrant devops
+[root@bazinga sudoers.d]# vim devops # note that % means group
+[root@bazinga sudoers.d]# cat devops 
+Defaults:vagrant !fqdn
+Defaults:vagrant !requiretty
+%devops ALL=(ALL) NOPASSWD: ALL
+```
+
 
 
 
