@@ -815,6 +815,26 @@ Defaults:vagrant !requiretty
 %devops ALL=(ALL) NOPASSWD: ALL
 ```
 
+## software management
+If we want to be able to use the `tree` command to see the file system tree, we could go to rmpfind.net and find the download link of the tree package. Then with root user, run `curl download-link -o file-name-to-save-as` to downlowd the package. `rpm -ivh file-name` to install the package.  To check whether tree is installed, use `rum -qa | grep tree`. To delete the tree package, `rpm -e tree-package-full-name`, where the package full name is the what the prv command returned. 
+
+Sometimes, packages need many dependencies to be able to be installed. `yum` is a better option for this. To search for packages that contain "tree": `yum search tree`. To install a package that you found: `yum install tree.aarch64`, this will automatically install any dependencies you need. `yum remove tree.aarch64` removes the package. `ls /etc/yum.repos.d/` shows the links that yum have access to install packages. If your target package is not there, for example, Jenkins, then you refer to their official documentation `https://www.jenkins.io/doc/book/installing/`. Find the steps for your Linux distributions, I have Fedora. 
+
+## Services
+
+
+
+## Processes
+
+
+## Archiving
+
+
+## Ubuntu commands
+
+
+
+
 
 
 
