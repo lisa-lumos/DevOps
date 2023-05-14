@@ -821,8 +821,50 @@ If we want to be able to use the `tree` command to see the file system tree, we 
 Sometimes, packages need many dependencies to be able to be installed. `yum` is a better option for this. To search for packages that contain "tree": `yum search tree`. To install a package that you found: `yum install tree.aarch64`, this will automatically install any dependencies you need. `yum remove tree.aarch64` removes the package. `ls /etc/yum.repos.d/` shows the links that yum have access to install packages. If your target package is not there, for example, Jenkins, then you refer to their official documentation `https://www.jenkins.io/doc/book/installing/`. Find the steps for your Linux distributions, I have Fedora. 
 
 ## Services
+```console
+[root@bazinga ~]# yum install httpd -y
+[root@bazinga ~]# systemctl status httpd # check status of this httpd
+○ httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: di>
+     Active: inactive (dead)
+       Docs: man:httpd.service(8)
+[root@bazinga ~]# systemctl start httpd # start the service
+[root@bazinga ~]# systemctl status httpd # check the status again
+● httpd.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: di>
+     Active: active (running) since Sun 2023-05-14 11:47:49 PDT; 17s ago
+       Docs: man:httpd.service(8)
+   Main PID: 92713 (httpd)
+     Status: "Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/>
+      Tasks: 177 (limit: 2233)
+     Memory: 13.5M
+        CPU: 77ms
+     CGroup: /system.slice/httpd.service
+             ├─ 92713 /usr/sbin/httpd -DFOREGROUND
+             ├─ 92714 /usr/sbin/httpd -DFOREGROUND
+             ├─ 92715 /usr/sbin/httpd -DFOREGROUND
+             ├─ 92716 /usr/sbin/httpd -DFOREGROUND
+             └─ 92717 /usr/sbin/httpd -DFOREGROUND
 
+May 14 11:47:49 bazinga.localdomain systemd[1]: Starting The Apache HTTP Server...
+May 14 11:47:49 bazinga.localdomain httpd[92713]: AH00558: httpd: Could not reliably de>
+May 14 11:47:49 bazinga.localdomain httpd[92713]: Server configured, listening on: port>
+May 14 11:47:49 bazinga.localdomain systemd[1]: Started The Apache HTTP Server.
+[root@bazinga ~]# systemctl restart httpd # restart after config changes
+[root@bazinga ~]# systemctl reload httpd # reload the config without restarting
+[root@bazinga ~]# sudo reboot
+Connection to 127.0.0.1 closed by remote host.
 
+(base) lisa@mac16 fedora % vagrant ssh
+
+[root@bazinga ~]# systemctl enable httpd # enable it at boot time
+Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /usr/lib/systemd/system/httpd.service.
+[root@bazinga ~]# systemctl start httpd # start is after enabling it
+[root@bazinga ~]# systemctl is-active httpd # check if service is active
+active
+[root@bazinga ~]# systemctl is-enabled httpd # check if service is enabled
+enabled
+```
 
 ## Processes
 
