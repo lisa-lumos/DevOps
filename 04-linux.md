@@ -867,7 +867,47 @@ enabled
 ```
 
 ## Processes
+```console
+[root@bazinga ~]# top
 
+top - 09:51:24 up 18 min,  1 user,  load average: 0.00, 0.02, 0.00
+Tasks: 207 total,   1 running, 206 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.2 us,  0.2 sy,  0.0 ni, 99.5 id,  0.0 wa,  0.0 hi,  0.2 si,  0.0 st
+MiB Mem :   1950.8 total,   1264.0 free,    235.3 used,    451.6 buff/cache
+MiB Swap:   1950.0 total,   1950.0 free,      0.0 used.   1690.3 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND         
+     13 root      20   0       0      0      0 I   0.3   0.0   0:00.20 rcu_sched       
+    705 systemd+  20   0   18372   7128   6320 S   0.3   0.4   0:01.94 systemd-oomd    
+   2377 root      20   0  258344  17796  15336 S   0.3   0.9   0:00.07 NetworkManager  
+   2870 root      20   0   10684   3716   2960 R   0.3   0.2   0:00.28 top             
+      1 root      20   0  106820  15016   9760 S   0.0   0.8   0:00.79 systemd         
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.00 kthreadd        
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp          
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp      
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-ev+
+      8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_wq    
+      9 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_tasks_kthre 
+     10 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_tasks_rude_ 
+     11 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_tasks_trace 
+     12 root      20   0       0      0      0 S   0.0   0.0   0:00.02 ksoftirqd/0     
+     14 root      rt   0       0      0      0 S   0.0   0.0   0:00.00 migration/0     
+     16 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/0         
+     17 root      20   0       0      0      0 S   0.0   0.0   0:00.00 cpuhp/1         
+     18 root      rt   0       0      0      0 S   0.0   0.0   0:00.00 migration/1     
+     19 root      20   0       0      0      0 S   0.0   0.0   0:00.01 ksoftirqd/1     
+     21 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/1:0H-ev+
+     22 root      20   0       0      0      0 S   0.0   0.0   0:00.00 kdevtmpfs       
+     23 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 netns           
+     24 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 inet_frag_wq    
+     26 root      20   0       0      0      0 S   0.0   0.0   0:00.02 kauditd         
+
+```
+`top` shows the running processes etc. It sorts the processes based on CPU consumption. 1 running, 206 sleeping shows this is a lazy OS. Zombies are the processes whose operations are done, but their entry is still in the process table. `q` to quit the command. 
+
+`ps aux` displays similar info on the screen, and quits automatically. 
+
+`ps -ef` instead of cpu utilization, it will show you the parent process id (PPID). `ps -ef | grep httpd` shows all the httpd process. `kill 1420` asks process that has PID of 1420 to first kill its child processes, then kill the process itself. But sometimes processes becomes adamant and does not listen, so you have to forcefully kill them with `kill -9 1420`. But this only kills this parent process - all its child processes will keep running and become orphaned. Nowadays OS are smart and will automatically kill these orphaned processes. But you can manually kill them using `ps -ef | grep httpd | grep -v 'grep' | awk '{print $2} | xargs kill -9'`. 
 
 ## Archiving
 
