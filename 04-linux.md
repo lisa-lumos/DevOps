@@ -910,7 +910,67 @@ MiB Swap:   1950.0 total,   1950.0 free,      0.0 used.   1690.3 avail Mem
 `ps -ef` instead of cpu utilization, it will show you the parent process id (PPID). `ps -ef | grep httpd` shows all the httpd process. `kill 1420` asks process that has PID of 1420 to first kill its child processes, then kill the process itself. But sometimes processes becomes adamant and does not listen, so you have to forcefully kill them with `kill -9 1420`. But this only kills this parent process - all its child processes will keep running and become orphaned. Nowadays OS are smart and will automatically kill these orphaned processes. But you can manually kill them using `ps -ef | grep httpd | grep -v 'grep' | awk '{print $2} | xargs kill -9'`. 
 
 ## Archiving
+Archiving is often used to make a backup, with a timestamp. 
 
+The old, legacy, feature-rich command is `tar`: 
+```console
+[root@bazinga ~]# cd /var/log/
+[root@bazinga log]# ls
+anaconda         dnf.log      journal  sssd                  vmware-network.log
+audit            dnf.rpm.log  lastlog  tallylog              vmware-vgauthsvc.log.0
+btmp             firewalld    private  tuned                 vmware-vmsvc-root.log
+chrony           hawkey.log   README   vmware-network.1.log  vmware-vmtoolsd-root.log
+dnf.librepo.log  httpd        sa       vmware-network.2.log  wtmp
+[root@bazinga log]# tar -czvf anaconda_05212023.tar.gz anaconda # zip a folder
+anaconda/
+anaconda/anaconda.log
+anaconda/syslog
+anaconda/program.log
+anaconda/packaging.log
+anaconda/storage.log
+anaconda/lvm.log
+anaconda/dnf.librepo.log
+anaconda/hawkey.log
+anaconda/dbus.log
+anaconda/ks-script-0pwrzqar.log
+anaconda/ks-script-7wardwvi.log
+anaconda/ks-script-foqk_z4x.log
+anaconda/ks-script-njicfc0h.log
+anaconda/journal.log
+anaconda/lorax-packages.log
+[root@bazinga log]# ls 
+anaconda                  dnf.rpm.log  README                vmware-network.log
+anaconda_05212023.tar.gz  firewalld    sa                    vmware-vgauthsvc.log.0
+audit                     hawkey.log   sssd                  vmware-vmsvc-root.log
+btmp                      httpd        tallylog              vmware-vmtoolsd-root.log
+chrony                    journal      tuned                 wtmp
+dnf.librepo.log           lastlog      vmware-network.1.log
+dnf.log                   private      vmware-network.2.log
+[root@bazinga log]# file anaconda_05212023.tar.gz 
+anaconda_05212023.tar.gz: gzip compressed data, from Unix, original size modulo 2^32 3164160
+[root@bazinga log]# mv anaconda_05212023.tar.gz /tmp/
+[root@bazinga /]# cd /tmp/
+[root@bazinga tmp]# tar -xzvf anaconda_05212023.tar.gz # unzip it
+[root@bazinga tmp]# ls
+anaconda
+anaconda_05212023.tar.gz
+...
+[root@bazinga tmp]# tar -xzvf anaconda_05212023.tar.gz -C /opt/ # unzip to a diff dir
+```
+
+An alternative is `zip` and `unzip`:
+```console
+[root@bazinga log]# yum install zip unzip -y
+[root@bazinga log]# zip -r anaconda_05212023.zip anaconda/
+[root@bazinga log]# mv anaconda_05212023.zip /opt/
+[root@bazinga log]# cd /opt/
+[root@bazinga opt]# ls
+anaconda  anaconda_05212023.zip
+[root@bazinga opt]# rm -rf anaconda
+[root@bazinga opt]# ls
+anaconda_05212023.zip
+[root@bazinga opt]# unzip anaconda_05212023.zip 
+```
 
 ## Ubuntu commands
 
