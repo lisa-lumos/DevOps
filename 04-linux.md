@@ -973,26 +973,50 @@ anaconda_05212023.zip
 ```
 
 ## Ubuntu commands
+Most of the commands above works for Ubuntu also, but some are Ubuntu specific. 
+1. `adduser` instead of `useradd`
+2. Default editor being `nano`, instead of `vim`
+3. Package manager. 
 
+```console
+[root@bazinga ~]# useradd devops
+[root@bazinga ~]# su - devops # Error: no home direcotry. Ubuntu will not create home dir and mail spool for a new user
+[root@bazinga ~]# userdel -r devops
+[root@bazinga ~]# adduser devops # this works in Ubuntu easily
+[root@bazinga ~]# id devops # will show uid, gid, groups
 
+[root@bazinga ~]# visudo # opens in nano editor
+[root@bazinga ~]# export EDITOR=vim # set var temporarily on current shell. clears after a logout.
+[root@bazinga ~]# visudo # opens in vim editor
 
+[root@bazinga ~]# wget http://archive.ubuntu.com/ubuntu/pool/universe/t/tree/tree_1.7.0-3_amd64.deb
+[root@bazinga ~]# dpkg -i tree_1.7.0-3_amd64.deb
+[root@bazinga ~]# tree # now it works
+[root@bazinga ~]# dpkg -l # list all the debian pkgs on your machine
+[root@bazinga ~]# dpkg -l | grep tree # find the tree package
+[root@bazinga ~]# dpkg -r tree # removes the tree package
 
+[root@bazinga ~]# cd /etc/apt/
+[root@bazinga ~]# ls # there is a sources.list there, contains repo info
+[root@bazinga ~]# apt update # check all the latest repo, and create a list
+[root@bazinga ~]# apt search tree # search for packages
+[root@bazinga ~]# apt install tree 
+[root@bazinga ~]# apt install apache2 # can auto download dependencies, if any
+[root@bazinga ~]# systemctl status apache2 # shows it is running
+[root@bazinga ~]# systemctl is-enabled apache2 # show it is enabled
+[root@bazinga ~]# apt upgrade # upgrade all your packages
+[root@bazinga ~]# apt remove apache2 # rmv a pkg, without removing the data and config
+[root@bazinga ~]# apt purge apache2 # rmv a pkg, with all its config and data
+```
 
+If you run `visodu` in Ubuntu, it will open the default editor Nano. 
 
+Whenever you want to install any software in Ubuntu, or any Debian machine, you need to run the `apt update` first. You do not need to do this with `yum`, because yum will always search first (create list), and it can refresh the list every 24 hrs. 
 
+But this is where Ubuntu Debian beats RedHat system - because of its software access. It has many many software which is available from many many repos in the world. 
 
+In Ubuntu, if you install any service, it will start it automatically. Such as apache2. 
 
+When you install/uninstall services in Ubuntu, like apache2, which is a network service that sells webpages, it will also update the firewall rules. `ufw` means Ubuntu firewall.  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+There are a few more different commands, which will be covered in bash scripting, and AWS cloud computing. 
