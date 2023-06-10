@@ -62,15 +62,46 @@ After updating the "Vagrantfile", run `vagrant reload` to apply the changes.
 
 In Ubuntu, run `ifconfig` to show all the network interfaces. 
 
-
-
-
 ## Vagrant Sync Directories
+When you create a VM with vagrant, it will sync this vagrant dir, in this case, `vms/fedora` of your machine, with `/vagrant` dir inside the vm. This happens by default. 
 
+Inside the VM, if you create new files in this folder, it will sync to the vm directory of your machine. Same happens vise versa.
 
+This is called Sync directory in Vagrant. 2 use cases for it:
+- To preserve files that lives in the VM, in case the VM is corrupted/deleted. 
+- You can use IDEs such as IntelliJ on your machine to edit these files, and no need to login to this vm and use the vim editor etc. Then you can use these files in the vm. 
 
+For example, on my machine, in the shared folder, using your preferred text editor, create a file "script1.sh":
+```sh
+#!/bin/bash
+echo "Welcome to Bash Scripting. "
+sudo apt update
+
+echo "Completed successfully. "
+```
+
+And to run this shellscript in vm, run:
+```console
+[root@bazinga devops]# chmod +x *.sh
+[root@bazinga devops]# ./script1.sh 
+```
+
+Note: this works natively for Windows. For Mac, will need extra config, by adding `config.vm.synced_folder "/Users/lisa/derivedData/vms/fedora/shared-dir",  "/home/vagrant/vagrant-data"` to the config file, for example. After editing the Vagrantfile, run `vagrant reload` to apply new changes. 
 
 ## Provisioning
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Website Setup
