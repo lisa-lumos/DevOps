@@ -88,11 +88,47 @@ And to run this shellscript in vm, run:
 
 Note: this works natively for Windows. For Mac, will need extra config, by adding `config.vm.synced_folder "/Users/lisa/derivedData/vms/fedora/shared-dir",  "/home/vagrant/vagrant-data"` to the config file, for example. After editing the Vagrantfile, run `vagrant reload` to apply new changes. 
 
-## Provisioning
+## Provisioning/Bootstrapping
+Executing your commands/scripts to configure something, when your VM comes up. 
 
+You can put all these commands in the Vagrantfile config section, and vagrant will execute them for you. You need to make sure these commands are not interactive - they do not ask questions. "Vagranfile" example:
+```ruby
+Vagrant.configure("2") do |config| 
+  config.vm.box = "jacobw/fedora35-arm64" 
+  config.vm.network "private_network", ip: "192.168.56.12"
+  config.vm.provider "vmware_desktop" do |vmware|
+    vmware.gui = true
+    vmware.allowlist_verified = true
+  end
+  config.vm.synced_folder "/Users/lisa/derivedData/vms/fedora/shared-dir",  "/home/vagrant/vagrant-data"
+  config.vm.provision "shell", inline: <<-SHELL
+    yum install httpd wget unzip -y
+    mkdir /opt/devopsdir
+    free -m
+    uptime
+  SHELL
+end
+```
 
-
-
+Run `vagrant reload --provision` if the vm already exists:
+```console
+(base) lisa@mac16 fedora % vagrant reload --provision
+...
+==> default: Running provisioner: shell...
+    default: Running: inline script
+    default: Last metadata expiration check: 2:38:44 ago on Sun 11 Jun 2023 07:56:38 AM PDT.
+    default: Package httpd-2.4.54-1.fc35.aarch64 is already installed.
+    default: Package wget-1.21.2-2.fc35.aarch64 is already installed.
+    default: Package unzip-6.0-53.fc35.aarch64 is already installed.
+    default: Dependencies resolved.
+    default: Nothing to do.
+    default: Complete!
+    default:                total        used        free      shared  buff/cache   available
+    default: Mem:            1950         220        1258           1         471        1705
+    default: Swap:           1949           0        1949
+    default:  10:35:22 up 0 min,  0 users,  load average: 0.06, 0.02, 0.00
+...
+```
 
 
 
