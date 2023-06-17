@@ -130,17 +130,41 @@ Run `vagrant reload --provision` if the vm already exists:
 ...
 ```
 
-
-
-
-
-
-
-
-
-
-
 ## Website Setup
+Hosting a service/server on Linux. 
+
+When httpd is enabled and running, get the static/dynamic ip:
+```console
+[root@bazinga ~]# ip addr show
+```
+and paste in the browser of your machine. If nothing shows up, stop the firewall:
+```console
+[root@bazinga ~]# systemctl stop firewalld
+[root@bazinga ~]# systemctl disable firewalld
+Removed /etc/systemd/system/multi-user.target.wants/firewalld.service.
+Removed /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+```
+
+Note that the server data is located in `/var/www/html`: 
+```console
+[root@bazinga ~]# cd /var/www/html
+[root@bazinga html]# touch index.html
+[root@bazinga html]# ls
+index.html
+[root@bazinga html]# vi index.html 
+[root@bazinga html]# cat index.html 
+Hello world! 
+```
+
+As a best practice, when you make config changes to the server, you restart/reload: 
+```console
+[root@bazinga html]# systemctl restart httpd
+```
+Refresh the ip page on your local machine, and you can see the new website. 
+
+To get a template from other website, navigate to the `/tmp` folder, then use `wget your-download-link` to download the file to the current folder. `unzip your-file-name.zip` to unzip the file. Navigate to the unzipped folder, `cp -r * /var/www/html` to copy all of the contents to the httpd's website folder. Restart the httpd service, and you should see the website in your machine's browser. 
+
+
 
 
 ## Website Setup, Wordpress
