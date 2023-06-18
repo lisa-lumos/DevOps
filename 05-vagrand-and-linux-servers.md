@@ -130,7 +130,7 @@ Run `vagrant reload --provision` if the vm already exists:
 ...
 ```
 
-## Website Setup
+## Website Setup (static)
 Hosting a service/server on Linux. 
 
 When httpd is enabled and running, get the static/dynamic ip:
@@ -164,11 +164,12 @@ Refresh the ip page on your local machine, and you can see the new website.
 
 To get a template from other website, navigate to the `/tmp` folder, then use `wget your-download-link` to download the file to the current folder. `unzip your-file-name.zip` to unzip the file. Navigate to the unzipped folder, `cp -r * /var/www/html` to copy all of the contents to the httpd's website folder. Restart the httpd service, and you should see the website in your machine's browser. 
 
+## Website Setup, Wordpress (with a database)
+Create a new vm dir `vms/wordpress`, navigate to the dir, run `vagrant init your-vm-version` to create the vagrant file. Uncomment `config.vm.network "private_network", ip: "192.168.56.13"` to create a static ip (make sure the ip is different from previous vms). Give it a bridge adapter - uncomment `config.vm.network "public_network"`. 
 
+`vagrant up` to bring up the vm. Refer to "wordpress setup on ubuntu site:ubuntu.com" search result to set up. 
 
-
-## Website Setup, Wordpress
-
+References: https://discourse.ubuntu.com/t/install-and-configure-wordpress/13959. 
 
 ## Automate Website setup
 
