@@ -172,9 +172,45 @@ Create a new vm dir `vms/wordpress`, navigate to the dir, run `vagrant init your
 References: https://discourse.ubuntu.com/t/install-and-configure-wordpress/13959. 
 
 ## Automate Website setup
+Infrastructure as code (IAC): Will put the entire infrastructure of the website in the Vagrantfile: Basically, put the commands in the prv chapter into the `config.vm.provision` section, and make then not interactive. 
 
+"Vagranfile":
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.box = "jacobw/fedora35-arm64" 
+  config.vm.network "private_network", ip: "192.168.56.91"
+  config.vm.provider "vmware_desktop" do |vmware|
+    vmware.gui = true
+    vmware.allowlist_verified = true
+   # vmware.memory = "1024"
+   end
+
+   config.vm.provision "shell", inline: <<-SHELL
+   mv /etc/yum.repos.d/fedora-updates.repo /tmp/
+   mv /etc/yum.repos.d/fedora-updates-modular.repo /tmp/
+   yum clean all
+   yum update
+   yum install httpd wget unzip -y
+	 systemctl start httpd
+	 systemctl enable httpd
+   mkdir -p /tmp/finance
+	 cd /tmp/finance
+	 wget https://www.tooplate.com/zip-templates/2119_gymso_fitness.zip
+	 unzip -o 2119_gymso_fitness.zip # -o means overwrite existing file
+	 cp -r 2119_gymso_fitness/* /var/www/html/
+	 systemctl restart httpd
+   systemctl stop firewalld
+   cd /tmp/ # jump out of the to-be-deleted dir
+   rm -rf /tmp/finance # del the dir
+   SHELL
+end
+```
+
+This script has re-usability. You can destroy the vm, but as long as you have the Vagrantfile, you can provision it again anytime you want. 
 
 ## Automate Wordpress Setup
+Similar as the prv chapter, you can do the same to Wordpress. 
+
 
 
 ## Multi VM Vagrant file
