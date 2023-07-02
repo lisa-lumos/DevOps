@@ -262,24 +262,48 @@ config.vm.box = "spox/ubuntu-arm"
 end
 ```
 
+## Multi VM Vagrant file
+By far, what we have is one vm per folder, and the vagrant file for that vm lives in that folder. If you need multiple vms, such as in one project, multiple services running in multiple VMs (db on a vm, app service on a different vm, etc), this becomes harder to manage. You need a "multi VM vagrant file". Ref: https://developer.hashicorp.com/vagrant/docs/multi-machine. 
 
+ChatGPT can generate vagrant file for you. Example query: "Multi vm vagranfile, with web01 ubuntu20, web02 with ubuntu 20, and db01 with centos7. Private IP for all the vms. Provisioning for db01. Set hostname too. ". You need to know what to ask it. 
 
+Example "Vagranfile":
+```ruby
+Vagrant.configure("2") do |config|
+  # Create web01 with Ubuntu 20
+  config.vm.define "web01" do |web01|
+    web01.vm.box = "ubuntu/focal64"
+    web01.vm.hostname = "web01"
+    web01.vm.network "private_network", ip: "192.168.56.41"
+  end
 
+  # Create web02 with Ubuntu 20
+  config.vm.define "web02" do |web02|
+    web02.vm.box = "ubuntu/focal64"
+    web02.vm.hostname = "web02"
+    web02.vm.network "private_network", ip: "192.168.56.42"
+  end
 
+  # Create db01 with CentOS 7
+  config.vm.define "db01" do |db01|
+    db01.vm.box = "centos/7"
+    db01.vm.hostname = "db01"
+    db01.vm.network "private_network", ip: "192.168.56.43"
 
+    db01.vm.provision "shell", inline: <<-SHELL
+      yum install -y wget unzip mariadb-server -y
+      systemctl start mariadb
+      systemctl enable mariadb
+    SHELL
+  end
+end
+```
 
+In terminal, navigate to the folder where file resides, and `vagrant up`. 
 
+To access one of the vms, you need its name, such as `vagrant ssh web01`. To halt a specific vm: `vagrant halt web02`. Similarly, `vagrant up web01`, `vagrant destroy web01`. If you just do `vagrant destroy`, it will destroy all the vms. 
 
+If you add a new vm in the vagrant file, you can only do `vagrant up ...` for that specific vm. 
 
-
-
-
-
-
-
-
-
-
-
-
+`vagrant destroy --force` to delete all vms in the file without questions. 
 
