@@ -72,7 +72,7 @@ devops:
   Tech: 
     Cloud: AWS
     Containers: K8s
-    CICD: Jenkins"
+    CICD: Jenkins
     GitOps: 
       - GitLab
       - ArgoCD
