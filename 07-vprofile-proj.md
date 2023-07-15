@@ -26,20 +26,95 @@ When user logs in, before the app runs an sql query to access the user info stor
 
 Note that it is very important for a DevOps engineer to understand the flow of the stack, so whenever any issue happens, they can understand where it is originating from. For example, if the webpage is showing, but user cannot login, it is the database service not connected to the app; if the webpage is not showing properly, it is the Tomcat having problem. 
 
+## Manual VM Setup
+Note that we need to install vagrant plugin called vagrant-hostmanager. So every vm's "/etc/hosts" file will have the matching name and ip address, same with the ones specified in the vagrant file. 
 
+Multi-vm vagrantfile:
+```ruby
+Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true 
+  config.hostmanager.manage_host = true
+  
+### DB vm  ####
+  config.vm.define "db01" do |db01|
+    db01.vm.box = "eurolinux-vagrant/centos-stream-9"
+    db01.vm.hostname = "db01"
+    db01.vm.network "private_network", ip: "192.168.56.15"
+    db01.vm.provider "virtualbox" do |vb|
+     vb.memory = "600"
+   end
 
+  end
+  
+### Memcache vm  #### 
+  config.vm.define "mc01" do |mc01|
+    mc01.vm.box = "eurolinux-vagrant/centos-stream-9"
+    mc01.vm.hostname = "mc01"
+    mc01.vm.network "private_network", ip: "192.168.56.14"
+    mc01.vm.provider "virtualbox" do |vb|
+     vb.memory = "600"
+   end
+  end
+  
+### RabbitMQ vm  ####
+  config.vm.define "rmq01" do |rmq01|
+    rmq01.vm.box = "eurolinux-vagrant/centos-stream-9"
+  rmq01.vm.hostname = "rmq01"
+    rmq01.vm.network "private_network", ip: "192.168.56.13"
+    rmq01.vm.provider "virtualbox" do |vb|
+     vb.memory = "600"
+   end
+  end
+  
+### tomcat vm ###
+   config.vm.define "app01" do |app01|
+    app01.vm.box = "eurolinux-vagrant/centos-stream-9"
+    app01.vm.hostname = "app01"
+    app01.vm.network "private_network", ip: "192.168.56.12"
+    app01.vm.provider "virtualbox" do |vb|
+     vb.memory = "800"
+   end
+   end
+   
+  
+### Nginx VM ###
+  config.vm.define "web01" do |web01|
+    web01.vm.box = "ubuntu/jammy64"
+    web01.vm.hostname = "web01"
+  web01.vm.network "private_network", ip: "192.168.56.11"
+  web01.vm.provider "virtualbox" do |vb|
+     vb.gui = true
+     vb.memory = "800"
+   end
+end
+  
+end
+```
 
+Before you do `vagrant up` to bring up all the vms, do `vagrant global-status` to make sure no other vm is running. `vagrant status` to see all current machine states. 
 
+```console
+vagrant ssh db01    # login to this vm
 
+cat /etc/hosts      # shows the ip address of all 5 vms, and their names
+```
 
+Note in a multi-machine env, where the connection between the machines are via IP address. However, IP address may change, so we always use the host name, not the IP addresses. 
 
+To test whether the name resolves to the IP address or not:
+```console
+ping web01 -c 4     # 4 means 4 counts of ping packets
 
+vagrant ssh web01
+cat /etc/hosts 
+ping app01 -c 4
+exit
 
-
-
-
-
-
-
+vagrant ssh app01
+ping db01 -c 4
+ping mc01 -c 4
+ping rmq01 -c 4
+exit
+```
 
 
