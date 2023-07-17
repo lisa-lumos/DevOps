@@ -117,4 +117,69 @@ ping rmq01 -c 4
 exit
 ```
 
+## Manual db, cache, queue setup
+Note that: A stack means a combination of multiple services. A cluster means a group of systems running the same service. 
+
+When we set up a stack, a good practice is to always do it from the database, or from the backend, so we can start validating, and then, to the frontend. When we stop a stack, it will be reverse this order - first stop the frontend services, such as app servers, web services, then to the backend and databases. 
+
+### MySQL setup
+```console
+vagrant ssh db01
+sudo -i
+yum update -y
+yum install epel-release -y   # gives access to more packages
+yum install git mariadb-server -y
+systemctl start mariadb       # package name and service name can be different
+systemctl enable mariadb
+systemctl status mariadb
+
+# set up the db: 
+mysql_secure_installation     # skip root pwd for db, switch to unix_socket authentication, change root pwd, and set the pwd. rmv anonymous users. Disallow root login remotely - should be yes, but set no for testing purposes. rmv test db and its access. reload privilege tables. 
+
+mysql -u root -p[your_pwd_without_space]
+> create database accounts;
+> show databases
+> 
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
