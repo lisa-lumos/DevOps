@@ -139,45 +139,70 @@ mysql_secure_installation     # skip root pwd for db, switch to unix_socket auth
 mysql -u root -p[your_pwd_without_space]
 > create database accounts;
 > show databases
-> 
+> grant all privileges on accounts.* to 'admin'@'%' identified by 'admin123';
+> FLUSH PRIVILEGES;
+> exit;
 
+git clone -b main https://github.com/hkhcoder/vprofile-project.git 
+cd vprofile-project
+mysql -u root -padmin123 accounts < src/main/resources/db_backup.sql    # execute file against the accounts db
+mysql -u root -padmin123 accounts   # login to the db
+> show tables;    # see the tables already created
+> exit;
 
-
-
-
-
-
-
-
-
-
+systemctl restart mariadb     # restart the db service
+systemctl status mariadb      # check its status
+exit
+exit
 ```
 
+### Memcache setup
+```console
+vagrant ssh mc01
+sudo -i
+dnf install epel-release -y
+dnf install memcached -y     # install memcache
 
+systemctl start memcached
+systemctl enable memcached
+systemctl status memcached
 
+# search and replace local ip to 0.0.0.0
+# because some services, like Memcache, by default only listens to local connection
+# This command allows for remote connection to communicate with it
+# so it listens to all IPv4 ip addresses
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/sysconfig/memcached
+cat /etc/sysconfig/memcached      # review the changes
+systemctl restart memcached       # apply the changes
+systemctl status memcached        # check the status, make sure its running
 
+exit
+exit
+```
 
+### RabbitMQ setup
+```console
+vagrant ssh rmq01
+sudo -i
+yum update -y
+yum install epel-release -y
 
+dnf -y install centos-release-rabbitmq-38
+dnf --enablerepo=centos-rabbitmq-38 -y install rabbitmq-server    # enable repo, and install RabbitMQ server
 
+systemctl start rabbitmq-server
+systemctl enable rabbitmq-server
 
+# create config file, and add content
+sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
+cat /etc/rabbitmq/rabbitmq.config
 
+rabbitmqctl add_user test test      # add user test, with pwd as test
+rabbitmqctl set_user_tags test administrator
+systemctl restart rabbitmq-server   # apply config changes
+systemctl status rabbitmq-server    # service will not start, if there were config syntax mistake
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
