@@ -201,8 +201,111 @@ rabbitmqctl add_user test test      # add user test, with pwd as test
 rabbitmqctl set_user_tags test administrator
 systemctl restart rabbitmq-server   # apply config changes
 systemctl status rabbitmq-server    # service will not start, if there were config syntax mistake
+```
+
+### App setup
+Tomcat installation is different from other services that we install via yum/dnf, as they will extract their files in the proper Linux file system structure (log files will go to "/var/log", start up scripts will go to "systemd", configurations will go to "etc". ). For Tomcat service, we will need to set up systemctl for it.
+
+```console
+vagrant ssh app01
+sudo -i
+
+yum update -y
+yum install epel-release -y
+
+# install open jdk 11, because we need to build source code
+dnf -y install java-11-openjdk java-11-openjdk-devel
+dnf install git maven wget -y       # install git and maven
+
+cd /tmp/
+wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.75/bin/apache-tomcat-9.0.75.tar.gz
+tar xzvf apache-tomcat-9.0.75.tar.gz
+
+# add tomcat user
+useradd --home-dir /usr/local/tomcat --shell /sbin/nologin tomcat
+cp -r /tmp/apache-tomcat-9.0.75/* /usr/local/tomcat/
+ls -ld /usr/local/tomcat/                     # see owner as root
+chown -R tomcat.tomcat /usr/local/tomcat      # change owner, required for systemctl
+ls -ld /usr/local/tomcat/                     # see new owner as tomcat
+
+vi /etc/systemd/system/tomcat.service         # update tomcat config file to:
+
+[Unit]
+Description=Tomcat
+After=network.target
+[Service]
+User=tomcat
+WorkingDirectory=/usr/local/tomcat
+Environment=JRE_HOME=/usr/lib/jvm/jre
+Environment=JAVA_HOME=/usr/lib/jvm/jre
+Environment=CATALINA_HOME=/usr/local/tomcat
+Environment=CATALINE_BASE=/usr/local/tomcat
+ExecStart=/usr/local/tomcat/bin/catalina.sh run
+ExecStop=/usr/local/tomcat/bin/shutdown.sh
+SyslogIdentifier=tomcat-%i
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload                       # reload service to use new config
+
+systemctl start tomcat                        # now systemctl can be used directly
+systemctl enable tomcat
+
+# this folder will have bin, conf, lib, logs folders inside it, which is different with services installed via yum/apt, which have these folders in the proper Linux file system structure. 
+ls /usr/local/tomcat/ 
+
+
+
+
+
+
+
+
+
+
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
