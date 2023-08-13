@@ -275,8 +275,42 @@ systemctl status tomcat       # will see the app running.
 ```
 
 ### Nginx setup
+In Ubuntu, Nginx service gets started/enabled automatically. 
+```console
+vagrant ssh web01
+sudo -i
 
+cat /etc/hosts
+apt update && apt upgrade -y
 
+apt install nginx -y
+
+vi /etc/nginx/sites-available/vproapp       # create config file with contents:
+<!-- 
+upstream vproapp {
+  server app01:8080;
+}
+server {
+  listen 80;
+  location / {
+    proxy_pass http://vproapp;
+  }
+} 
+-->
+# when you access any website from browser, by default, it goes on port 80 for http, and port 443 for https. 
+# We set Nginx to listen to prot 80, and route the request to http://vproapp. The vproapp is the config give in the first part of config file. Note that if you have multiple cluster of Tomcat, the first section will have multiple entries, like app01, app02, ...
+
+ls /etc/nginx/sites-available       # loc of config and sites
+ls  -l /etc/nginx/sites-enabled     # link
+rm -rf /etc/nginx/sites-enabled/default     # rmv default config link
+
+# make our website the default link for Nginx
+ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
+ls  -l /etc/nginx/sites-enabled     # see vproapp links to .../sites-available/vproapp
+
+systemctl restart nginx
+systemctl status nginx    # if you make config error, service won't start, you see error here
+```
 
 
 
