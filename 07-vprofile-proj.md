@@ -253,23 +253,28 @@ systemctl enable tomcat
 
 # this folder will have bin, conf, lib, logs folders inside it, which is different with services installed via yum/apt, which have these folders in the proper Linux file system structure. 
 ls /usr/local/tomcat/ 
+```
 
+Code build & deploy:
+```console
+git clone -b main https://github.com/hkhcoder/vprofile-project.git
 
+# update file with backend server details, if needed
+cd vprofile-project
+vim src/main/resources/application.properties  
 
+mvn install       # find the artifact "vprofile-v2.war" in "target" folder
 
+systemctl stop tomcat
+rm -rf /usr/local/tomcat/webapps/ROOT     # remove the Tomcat default app
+cp target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war  # copy our app to loc
+systemctl start tomcat        # Tomcat extracts from war file and creates "root" folder
 
-
-
-
-
-
+systemctl status tomcat       # will see the app running. 
 
 ```
 
-
-
-
-
+### Nginx setup
 
 
 
