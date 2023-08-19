@@ -312,7 +312,43 @@ systemctl restart nginx
 systemctl status nginx    # if you make config error, service won't start, you see error here
 ```
 
+### Validate
+```console
+vagrant ssh web01
+sudo -i
 
+ip addr show        # get ip of web01, which is 192.168.56.11, belongs to Nginx
+
+# In the browser, enter http://192.168.56.11:80. 
+# Note that both http and port 80 is the default, 
+# so even if you just enter the ip, it will still work. 
+# The login page is from Tomcat. 
+# Login with admin_vp as user name and pwd. 
+# The login details are stored in the db. 
+
+# By far, Nginx, Tomcat and database are all validated. 
+
+# Click the "RabbitMq" button, and see the queue info
+# Click on the "All Users" button, and see the user list fetched from db
+# Click on any user, see the message "data is from db and dat inserted in cache",
+# so you know that the caching service is working fine. Click "Back".
+# Now click on the same user id again, should see the message "data is from cache".
+# This time is is loaded faster, because from the cache service
+
+vagrant destroy --force       # go to the folder on local machine, destroy all vms. 
+```
+
+## Automated
+### Introduction
+
+
+
+
+### Code
+
+
+
+### Execution
 
 
 
