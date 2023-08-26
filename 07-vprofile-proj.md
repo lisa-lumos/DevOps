@@ -339,50 +339,230 @@ vagrant destroy --force       # go to the folder on local machine, destroy all v
 ```
 
 ## Automated
-### Introduction
-
-
-
+### Intro
+Similar design as the prv proj, except here we will have bash scripts got executed automatically. These bash scripts will provision all the services (entire stack). 
 
 ### Code
+"Vagrantfile":
+```ruby
+Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true 
+  config.hostmanager.manage_host = true
+  
+  ### DB vm  ####
+  config.vm.define "db01" do |db01|
+    db01.vm.box = "geerlingguy/centos7"
+    db01.vm.hostname = "db01"
+    db01.vm.network "private_network", ip: "192.168.56.15"
+    db01.vm.provision "shell", path: "mysql.sh"  # this is new
+  end
+  
+  ### Memcache vm  #### 
+  config.vm.define "mc01" do |mc01|
+    mc01.vm.box = "geerlingguy/centos7"
+    mc01.vm.hostname = "mc01"
+    mc01.vm.network "private_network", ip: "192.168.56.14"
+    mc01.vm.provision "shell", path: "memcache.sh"  # this is new
+  end
+  
+  ### RabbitMQ vm  ####
+  config.vm.define "rmq01" do |rmq01|
+    rmq01.vm.box = "geerlingguy/centos7"
+    rmq01.vm.hostname = "rmq01"
+    rmq01.vm.network "private_network", ip: "192.168.56.16"
+    rmq01.vm.provision "shell", path: "rabbitmq.sh"  # this is new
+  end
+  
+  ### tomcat vm ###
+  config.vm.define "app01" do |app01|
+    app01.vm.box = "geerlingguy/centos7"
+    app01.vm.hostname = "app01"
+    app01.vm.network "private_network", ip: "192.168.56.12"
+    app01.vm.provision "shell", path: "tomcat.sh"  # this is new
+    app01.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+    end
+  end
+  
+  ### Nginx VM ###
+  config.vm.define "web01" do |web01|
+    web01.vm.box = "ubuntu/xenial64"
+    web01.vm.hostname = "web01"
+    web01.vm.network "private_network", ip: "192.168.56.11"
+    web01.vm.provision "shell", path: "nginx.sh"  # this is new
+  end
+  
+end
+```
 
+"mysql.sh" lives in same dir as Vagrantfile in the local machine, and contains the commands that we manually executed during manual setup:
+```sh
+#!/bin/bash
+DATABASE_PASS='admin123'
+sudo yum update -y
+sudo yum install epel-release -y
+sudo yum install git zip unzip -y
+sudo yum install mariadb-server -y
 
+# starting & enabling mariadb-server
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+cd /tmp/
+git clone -b local-setup https://github.com/devopshydclub/vprofile-project.git
+
+# restore the dump file for the application
+# to run sql from shell, need to pass login detail, and use "-e" flag to execute. 
+sudo mysqladmin -u root password "$DATABASE_PASS"
+sudo mysql -u root -p"$DATABASE_PASS" -e "UPDATE mysql.user SET Password=PASSWORD('$DATABASE_PASS') WHERE User='root'"
+sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User=''"
+sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'"
+sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
+sudo mysql -u root -p"$DATABASE_PASS" -e "create database accounts"
+sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on accounts.* TO 'admin'@'localhost' identified by 'admin123'"
+sudo mysql -u root -p"$DATABASE_PASS" -e "grant all privileges on accounts.* TO 'admin'@'%' identified by 'admin123'"
+sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vprofile-project/src/main/resources/db_backup.sql
+sudo mysql -u root -p"$DATABASE_PASS" -e "FLUSH PRIVILEGES"
+
+# Restart mariadb-server
+sudo systemctl restart mariadb
+
+# starting the firewall and allowing the mariadb to access from port no. 3306
+sudo systemctl start firewalld
+sudo systemctl enable firewalld
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --reload
+sudo systemctl restart mariadb
+```
+
+"memcache.sh":
+```sh
+#!/bin/bash
+sudo yum install epel-release -y
+sudo yum install memcached -y
+sudo systemctl start memcached
+sudo systemctl enable memcached
+sudo systemctl status memcached
+sudo memcached -p 11211 -U 11111 -u memcached -d
+```
+
+"rabbitmq.sh":
+```sh
+#!/bin/bash
+sudo yum install epel-release -y
+sudo yum update -y
+sudo yum install wget -y
+cd /tmp/
+wget http://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm
+sudo rpm -Uvh erlang-solutions-2.0-1.noarch.rpm
+sudo yum -y install erlang socat
+curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | sudo bash
+sudo yum install rabbitmq-server -y
+sudo systemctl start rabbitmq-server
+sudo systemctl enable rabbitmq-server
+sudo systemctl status rabbitmq-server
+sudo sh -c 'echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config'
+sudo rabbitmqctl add_user test test
+sudo rabbitmqctl set_user_tags test administrator
+sudo systemctl restart rabbitmq-server
+```
+
+"tomcat.sh":
+```sh
+TOMURL="https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.37/bin/apache-tomcat-8.5.37.tar.gz"
+yum install java-1.8.0-openjdk -y
+yum install git maven wget -y
+cd /tmp/
+wget $TOMURL -O tomcatbin.tar.gz
+EXTOUT=`tar xzvf tomcatbin.tar.gz`
+TOMDIR=`echo $EXTOUT | cut -d '/' -f1`
+useradd --shell /sbin/nologin tomcat
+rsync -avzh /tmp/$TOMDIR/ /usr/local/tomcat8/
+chown -R tomcat.tomcat /usr/local/tomcat8
+
+rm -rf /etc/systemd/system/tomcat.service
+
+cat <<EOT>> /etc/systemd/system/tomcat.service
+[Unit]
+Description=Tomcat
+After=network.target
+
+[Service]
+
+User=tomcat
+Group=tomcat
+
+WorkingDirectory=/usr/local/tomcat8
+
+#Environment=JRE_HOME=/usr/lib/jvm/jre
+Environment=JAVA_HOME=/usr/lib/jvm/jre
+
+Environment=CATALINA_PID=/var/tomcat/%i/run/tomcat.pid
+Environment=CATALINA_HOME=/usr/local/tomcat8
+Environment=CATALINE_BASE=/usr/local/tomcat8
+
+ExecStart=/usr/local/tomcat8/bin/catalina.sh run
+ExecStop=/usr/local/tomcat8/bin/shutdown.sh
+
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+EOT
+
+systemctl daemon-reload
+systemctl start tomcat
+systemctl enable tomcat
+
+git clone -b local-setup https://github.com/devopshydclub/vprofile-project.git
+cd vprofile-project
+mvn install
+systemctl stop tomcat
+sleep 60
+rm -rf /usr/local/tomcat8/webapps/ROOT*
+cp target/vprofile-v2.war /usr/local/tomcat8/webapps/ROOT.war
+systemctl start tomcat
+sleep 120
+cp /vagrant/application.properties /usr/local/tomcat8/webapps/ROOT/WEB-INF/classes/application.properties
+systemctl restart tomcat
+```
+
+"nginx.sh":
+```sh
+# adding repository and installing nginx		
+apt update
+apt install nginx -y
+cat <<EOT > vproapp
+upstream vproapp {
+ server app01:8080;
+}
+
+server {
+  listen 80;
+  location / {
+    proxy_pass http://vproapp;
+  }
+}
+EOT
+
+mv vproapp /etc/nginx/sites-available/vproapp
+rm -rf /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/vproapp /etc/nginx/sites-enabled/vproapp
+
+#starting nginx service and firewall
+systemctl start nginx
+systemctl enable nginx
+systemctl restart nginx
+```
 
 ### Execution
+Navigate to the project folder, and run `vagrant up`. 
 
+To validate the setup, can login using the ip specified in Vagrantfile, or even just the vm name "web01". 
 
+If you run `vagrant halt`, and validate that the `vagrant status` are in poweroff state, and then run `vagrant up`, it will just bring up all the VMs. Because vagrant will do provisioning only once. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+With this, we have a local setup that is completely automated, repeatable, and has IAC (infra as code). 
