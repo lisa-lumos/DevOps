@@ -59,8 +59,44 @@ For example, if we see 172.32.36.12, it does not fit in the above range, so it c
 By looking at the IP, you should be able to see whether it is public/private, and if it is private, then from which range. 
 
 ## Protocols, ports etc
+In networking communication, a protocol is a formal specification, that defines the procedure to communicate between sender/receiver. It defines various things, such as the format of the communication, timing, sequence, error handling, etc. 
 
+Transmission Control Protocol (TCP):
+- Reliable
+- Connection oriented
+- Performs three ways handshake
+- Provision for error detection, and re-transmission
+- Most applications use TCP for reliable and guaranteed transmission
+- e.g.: FTP, HTTP, HTTPS
 
+User Datagram Protocol (UDP): 
+- unreliable
+- Connectionless. Send it and forget it, whether it reaches destination or not
+- No acknowledgement waits
+- No proper sequencing of data units
+- Suitable for applications, where speed matters more than reliability
+- e.g.: DNS (where url needs to be translated into an IP address very quickly), DHCP (client ask for an IP address over the network), TFTP, ARP, RARP
+
+A computer has an IP address, and a service running inside a computer will have a port number. For example, if you are running a web service, using protocol HTTPS, the default port will be 443, which means it is serving the request on port number 443. A computer could have multiple services, via their respective port numbers. 
+
+Protocols have port numbers:
+| Protocol | Service name | UDP/TCP port number |
+| ---------| ------------ | ------------------- |
+| DNS | DNS UDP | UDP 53 |
+| DNS | DNS TCP | TCP 53 |
+| HTTP | Web | TCP 80 |
+| HTTPS | Secure Web | TCP 443 |
+| SMTP | Simple Mail Transport | TCP 25 |
+| POP | Post Office Protocol | TCP 109, 110 |
+| SNMP | Simple Network Management | TCP/UDP 161, 162 |
+| TELNET | Telnet Terminal | TCP 23 |
+| FTP | File Transfer Protocol | TCP 20, 21 |
+| SSH | Secure Shell (terminal) | TCP 22 |
+| AFP IP | Apple File Protocol/IP | TCP 447, 548 |
+
+Protocols in the application layer: telnet, FTP, DHCP, TFTP, HTTP, SMTP, DNT, SNMP. Transportation layer: TCP, UDP. Network layer: ICMP, ARP, RARP, IP. 
+
+When you work on a project, you should know what service is running in which server, what is the IP address, and it is running on which port number. 
 
 ## Networking Commands
 
