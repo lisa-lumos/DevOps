@@ -50,9 +50,9 @@ IPv4 address is a 32-bit (4 * 8 bits) binary number, which we mostly see in deci
 Public IP is with the Internet service provider, and the cloud providers. Private IP is for people to create their own network. But for the Internet services, the public IP is used. When you subscribe for an Internet connection, an ISP will allot a public IP to you, and that is your ID in the internet (mostly it is a dynamic IP, but you can get a static one also). 
 
 Private IP. When you want to setup a room full of computers, you will take a private IP range. There are 5 ranges in private IP. The 3 ranges that we use is class A/B/C, as class D/E is for research and multicasting. The 3 ranges we use are:
-- class A: 10.0.0.0 to 10.255.255.255
-- class B: 172.16.0.0 to 172.31.255.255
-- class C: 192.168.0.0 to 192.168.255.255
+- class A: 10.0.0.0 to 10.255.255.255 (10.etc)
+- class B: 172.16.0.0 to 172.31.255.255 (172.16-31.etc)
+- class C: 192.168.0.0 to 192.168.255.255 (192.168.etc)
 
 For example, if we see 172.32.36.12, it does not fit in the above range, so it could be a public IP. 
 
@@ -99,41 +99,50 @@ Protocols in the application layer: telnet, FTP, DHCP, TFTP, HTTP, SMTP, DNT, SN
 When you work on a project, you should know what service is running in which server, what is the IP address, and it is running on which port number. 
 
 ## Networking Commands
+Loopback address is the IP address when the computer is referring to itself. 
+```console
+# show all the network interfaces, and their IP addresses
+ifconfig
 
+# use this if the prior one doesn't work
+ip addr show
 
+# checks network connectivity from your machine to this IP address
+ping 192.168.40.12
 
+# to connect to the machine with the name instead of ip
+# you will need a DNS server,
+# or, make an entry in ect/hosts file, such as "192.168.40.12 db01"
+ping db01
 
+# trace route example. Shows all the hops it takes to reach to the google server
+tracert www.google.com
 
+# show all the TCP open ports in the current machine, 
+# and the PID/Program name (need to be root user to see PID)
+netstat -antp
 
+# scan the ports of a target
+# illegal in some countries
+nmap localhost # target is local machine
+nmap db01 # target a different machine
 
+# check whether a particular port is open on a target machine
+telnet 192.168.40.12 3306 # check for mariadb
+telnet 192.168.40.12 22   # check fof ssh
 
+# show DNS lookup
+dig www.google.com
+nslookup www.google.com   # this is an older version of dig
 
+# show the gateway
+route -n
 
+# view/add contents to the kernels ARP table
+# kernel maintains a table of all ip/name and mapping MAC address
+arp
 
+# live version of trace route, can see where the packet loss is happening
+mtr www.google.com
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
