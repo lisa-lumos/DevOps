@@ -10,12 +10,15 @@ Since containers are very lightweight, they can be archived, and become a contai
 The Container Engine running on the OS makes this possible. The most famous container runtime environment is Docker. 
 
 ## Docker intro
+Docker is a open platform for developing/shipping/running applications. It enables you to separate your applications from your infrastructure. Provides the ability to package/run an app in a loosely isolated env, called a container. The isolation and security allow you to run many containers, simultaneously on a host. 
 
+You can get image from registry, such as https://hub.docker.com. 
 
+`docker build`: build our own images.
 
+`docker pull`: pull from the official images
 
-
-
+`docker run`: run the container from the image. 
 
 
 
