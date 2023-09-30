@@ -158,7 +158,133 @@ docker images
 docker rmi a54ee9c44b3b 6130c26b5558 057d51c0049c 825d55fb6340 12766a6745ee feb5d9fea6a5
 ```
 
+## Vprofile Project on containers
+Vagrantfile:
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.network "private_network", ip: "192.168.56.82"
+  config.vm.network "public_network"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+  sudo apt-get update
+  sudo apt-get install \
+      ca-certificates \
+      curl \
+      gnupg -y
 
+  sudo install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  echo \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+  sudo curl -L "https://github.com/docker/compose/releases/download/v2.1.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+  chmod +x /usr/local/bin/docker-compose
+  SHELL
+end
+```
+
+Commands:
+```console
+# show all entries of vms on your local machine, stop them using vagrant halt
+vagrant global-status --prune
+
+# bring up this vm
+vagrant up
+vagrant ssh
+sudo -i
+
+# create "compose" dir
+mkdir compose
+cd compose/
+
+# docker compose command, read from docker-compose.yml file, will show all options 
+docker compose
+
+# download docker-compos.yml file for vprofile project, 
+# click raw view for this file in github to get the link for wget
+wget https://raw.githubusercontent.com/devopshydclub/vprofile-project/docker/compose/docker-compose.yml
+# paste the content into this file, if the link does not work
+ls      # see the downloaded file
+vim docker-compose.yml
+
+# bring up all the containers
+docker compose up -d
+
+# check status of all containers
+docker compose ps
+
+# show all the images from where the containers are created
+docker images
+
+# get ip of vm
+ip addr show
+
+# Go to browser and enter vm-ip:80, to go to nginx container
+
+# stop the containers
+docker compose down
+
+# rmv the containers, and all unused images
+docker system prune -a
+```
+
+"docker-compose.yml":
+```yml
+version: '3.8'
+services:
+  vprodb:
+    image: vprocontainers/vprofiledb # this is from uploade by vprocontainers account
+    ports:
+      - "3306:3306"
+    volumes:
+      - vprodbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=vprodbpass
+
+  vprocache01:
+    image: memcached # this is the official container for memcache
+    ports:
+      - "11211:11211"
+
+  vpromq01:
+    image: rabbitmq
+    ports:
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  vproapp:
+    image: vprocontainers/vprofileapp # this is from uploade by vprocontainers account
+    ports:
+      - "8080:8080"
+    volumes: 
+      - vproappdata:/usr/local/tomcat/webapps
+
+  vproweb:
+    image: vprocontainers/vprofileweb # this is from uploade by vprocontainers account
+    ports:
+      - "80:80"
+volumes:
+  vprodbdata: {}
+  vproappdata: {}
+```
+
+## Microservices
+
+
+
+
+
+### Microservices project
 
 
 
