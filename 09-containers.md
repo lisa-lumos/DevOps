@@ -279,10 +279,13 @@ volumes:
 ```
 
 ## Microservices
+Difference between monolithic and microservices application. 
 
+Monolithic: For example, a Java app, as a big service, running on Tomcat, it can have many sub service in it, such as a user interface, posts, chat, notification. If you want to make a change to any of the sub service, then you need to re-deploy the entire artifact. Andy everything needs to be redone in Java. 
 
+Microservices: For example, for the same big service, UI microservice can be written in Java, chat microservice written in Node.js, notification microservice written in Python, etc. These microservices can be deployed on different servers, and will interact with each other through an API gateway (communicate with APIs). Thus we achieve isolation. All the applications can be developed independently, have their own languages, libraries, etc. 
 
-
+We can use Docker to containerize them to reduce costs. That's why microservices and containers usually go side by side. 
 
 ### Microservices project
 
