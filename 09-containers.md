@@ -287,21 +287,39 @@ Microservices: For example, for the same big service, UI microservice can be wri
 
 We can use Docker to containerize them to reduce costs. That's why microservices and containers usually go side by side. 
 
-### Microservices project
+### Microservices project - EMart App
+In the front end, there is an API Gateway created with nginx, and listens at 3 end points: 
+1. root /. When the user access the URL of the website, they will be redirected to root, which is an app written in Angular (the client app).
+2. /spi. The client app will in turn connect to /api, which is served by an Emart api written in NodeJS, and connects to MongoDB. 
+3. /webapi. This connects to the Books api, which is written in Java, and connects to a MySQL db. 
 
+All of the microservices will be deployed as containers. EMart app represents an e-commerce app, like Amazon. An application can start like this, and can keep adding more microservices, such as another url for videos, for payment gateway, for cart, etc. 
 
+The same vagrant file an be used as in prv section. 
+```console
+# Clone source code of Emart App
+git clone https://github.com/devopshydclub/emartapp.git
+cd emartapp/
 
+# see thd docker-compose.yaml file in the dir
+ls
 
+# Bring up containers from docker-compose file
+vim docker-compose.yaml   
+docker compose up -d      # build and bring up images
 
+docker compose ps         # see all the container running
 
+docker ps -a
 
+ip addr show
 
+# Go to browser enter http://VMIp:80
 
-
-
-
-
-
-
-
-
+# Clean up
+docker compose down       # stop and rmv all containers
+docker system prune -a
+exit
+exit
+vagrant halt
+```
