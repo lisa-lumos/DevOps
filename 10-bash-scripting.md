@@ -1,6 +1,7 @@
 # 10. Bash Scripting
-To automate day to day tasks, sys admins write bash scripts in Linux system. 
+To automate day to day tasks, sys admins write bash scripts in Linux system. It is just commands in a text file, that can be executed whenever we want. 
 
+## First script
 "Vagrantfile":
 ```ruby
 Vagrant.configure("2") do |config|
@@ -47,15 +48,42 @@ vagrant ssh scriptbox
 hostname          # should return "scriptbox"
 sudo -i
 
-
-
-
+mkdir /opt/scripts
+cd /opt/scripts
+yum install vim -y
+vim firstscript.sh
 ```
 
+"firstscript.sh":
+```sh
+#!/bin/bash     # the shebang character, path of the interpreter to execute the script
 
+# This script prints system info
+echo "Welcome to bash script"
+echo
 
+echo "###########################################"
+echo "The uptime of the system is: "
+uptime
+echo
 
+echo "###########################################"
+echo "Memory Utilization: "
+free -m
+echo
 
+echo "###########################################"
+echo "Disk Utilization: "
+df -h
+```
+
+To run a script:
+```console
+ls -l                     # shows permissions
+chmod +x firstscript.sh   # give root executable permission
+./firstscript.sh
+/opt/scripts/firstscript.sh  # absolute path also work
+```
 
 
 
