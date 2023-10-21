@@ -85,14 +85,68 @@ chmod +x firstscript.sh   # give root executable permission
 /opt/scripts/firstscript.sh  # absolute path also work
 ```
 
+## Sample Script
+"websetup.sh"
+```sh
+#!/bin/bash
 
+# Installing packages
+echo "####################################"
+echo "Installing packages"
+echo "####################################"
+sudo yum install wget unzip httpd -y > /dev/null
+echo
 
+# Start & Enable HTTPD Service
+echo "####################################"
+echo "Start & Enable HTTPD Service"
+echo "####################################"
+sudo systemctl start httpd
+sudo systemctl enable httpd
+echo
 
+# Starting Artifact Deployment
+echo "####################################"
+echo "Starting Artifact Deployment"
+echo "####################################"
+mkdir -p /tmp/webfiles
+cd /tmp/webfiles
+echo
 
+wget https://www.tooplate.com/zip-templates/2098_health.zip > /dev/null
+unzip 2098_health.zip > /dev/null
+sudo cp -r 2098_health/* /var/www/html/
+echo 
 
+echo "####################################"
+echo "Restarting HTTPD service"
+echo "####################################"
+systemctl restart httpd
+echo
 
+echo "####################################"
+echo "Removing tmp files"
+echo "####################################"
+rm -rf /tmp/webfiles
+echo
 
+sudo systemctl status httpd
+ls /var/www/html/
+```
 
+To execute it:
+```console
+chmod +x /opt/scripts/websetup.sh
+/opt/scripts/websetup.sh
+
+ipconfig   # get ip address of vm, then go to that address from the browser
+```
+
+Chat-GPT can generate a similar script with "Bash Script to install httpd package, start httpd service, download html template from tooplate.com and deploy to /var/www/html. At the end restart the httpd service and check the status of httpd service". 
+
+If we put out script in the chat window and say "Enhance my script", it will add error handling etc. 
+
+## Variables
 
 
 
