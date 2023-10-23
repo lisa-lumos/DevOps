@@ -147,9 +147,71 @@ Chat-GPT can generate a similar script with "Bash Script to install httpd packag
 If we put out script in the chat window and say "Enhance my script", it will add error handling etc. 
 
 ## Variables
+Command line: 
+```console
+SKILL = "DevOps"  # define a variable
+echo $SKILL       # retrieve the variable
 
+PACKAGE = "httpd wget unzip"
+yum install $PACKAGE -y         # use the variable
+```
 
+If hardcoded strings are saved in variables in prev script, then it is convenient to adapt to changes. 
 
+"myscript.sh":
+```sh
+#!/bin/bash
+
+# Variable declaration
+PACKAGE="httpd wget unzip"
+SVC="httpd"
+URL="https://www.tooplate.com/zip-templates/2098_health.zip"
+ART_NAME="2098_health"
+TEMPDIR="/tmp/webfiles"
+
+# Installing packages
+echo "####################################"
+echo "Installing packages"
+echo "####################################"
+sudo yum install $PACKAGE -y > /dev/null
+echo
+
+# Start & Enable HTTPD Service
+echo "####################################"
+echo "Start & Enable HTTPD Service"
+echo "####################################"
+sudo systemctl start $SVC
+sudo systemctl enable $SVC
+echo
+
+# Starting Artifact Deployment
+echo "####################################"
+echo "Starting Artifact Deployment"
+echo "####################################"
+mkdir -p $TEMPDIR
+cd $TEMPDIR
+echo
+
+wget $URL > /dev/null
+unzip $ART_NAME.zip > /dev/null
+sudo cp -r $ART_NAME/* /var/www/html/
+echo 
+
+echo "####################################"
+echo "Restarting HTTPD service"
+echo "####################################"
+systemctl restart $SVC
+echo
+
+echo "####################################"
+echo "Removing tmp files"
+echo "####################################"
+rm -rf $TEMPDIR
+echo
+
+sudo systemctl status $SVC
+ls /var/www/html/
+```
 
 
 
