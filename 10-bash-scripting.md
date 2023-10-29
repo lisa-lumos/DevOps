@@ -139,7 +139,7 @@ To execute it:
 chmod +x /opt/scripts/websetup.sh
 /opt/scripts/websetup.sh
 
-ipconfig   # get ip address of vm, then go to that address from the browser
+ifconfig   # get ip address of vm, then go to that address from the browser
 ```
 
 Chat-GPT can generate a similar script with "Bash Script to install httpd package, start httpd service, download html template from tooplate.com and deploy to /var/www/html. At the end restart the httpd service and check the status of httpd service". 
@@ -158,7 +158,7 @@ yum install $PACKAGE -y         # use the variable
 
 If hardcoded strings are saved in variables in prev script, then it is convenient to adapt to changes. 
 
-"myscript.sh":
+"websetup.sh" to use variables:
 ```sh
 #!/bin/bash
 
@@ -213,7 +213,117 @@ sudo systemctl status $SVC
 ls /var/www/html/
 ```
 
+## Command line arguments
+Programmatically take arguments from script. 
 
+In the command line, if you try to access an undefined variable, such as `echo $my_undefined_var`, you will get empty return.
+
+In bash scripting, `$0` is the script name, `$1`, `$2`, ... are the names of arguments that are passed in when running the script, such as `./test.sh abc 123`. In this case, `$0` is `./test.sh`, `$1` is `abc`, and `$2` is `123`. 
+
+"test.sh"
+```sh
+echo $0
+echo $1
+echo $2
+echo $3
+```
+
+"websetup.sh" to use cmd arguments:
+```sh
+#!/bin/bash
+
+# Variable declaration
+PACKAGE="httpd wget unzip"
+SVC="httpd"
+# URL="https://www.tooplate.com/zip-templates/2098_health.zip"
+# ART_NAME="2098_health"
+TEMPDIR="/tmp/webfiles"
+
+# Installing packages
+echo "####################################"
+echo "Installing packages"
+echo "####################################"
+sudo yum install $PACKAGE -y > /dev/null
+echo
+
+# Start & Enable HTTPD Service
+echo "####################################"
+echo "Start & Enable HTTPD Service"
+echo "####################################"
+sudo systemctl start $SVC
+sudo systemctl enable $SVC
+echo
+
+# Starting Artifact Deployment
+echo "####################################"
+echo "Starting Artifact Deployment"
+echo "####################################"
+mkdir -p $TEMPDIR
+cd $TEMPDIR
+echo
+
+wget $1 > /dev/null
+unzip $2.zip > /dev/null
+sudo cp -r $2/* /var/www/html/
+echo 
+
+echo "####################################"
+echo "Restarting HTTPD service"
+echo "####################################"
+systemctl restart $SVC
+echo
+
+echo "####################################"
+echo "Removing tmp files"
+echo "####################################"
+rm -rf $TEMPDIR
+echo
+
+sudo systemctl status $SVC
+ls /var/www/html/
+```
+
+To run this, `./websetup.sh https://www.tooplate.com/zip-templates/2091_ziggy.zip 2091_ziggy`. 
+
+In this way, this code can be used to deploy any websites. 
+
+## System variables
+
+
+## Quotes
+
+
+## Command Substitution
+
+
+
+## Exporting variables
+
+
+
+## User Input
+
+
+
+## Decision making
+
+
+## Monitoring script
+
+
+## loops
+
+
+## While loops
+
+
+## Remote command execution
+
+
+## SSH key exchange
+
+
+## Finale
 
 
 
