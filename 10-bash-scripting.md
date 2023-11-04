@@ -288,10 +288,54 @@ To run this, `./websetup.sh https://www.tooplate.com/zip-templates/2091_ziggy.zi
 In this way, this code can be used to deploy any websites. 
 
 ## System variables
+Some system variables:
+- `$0`: the name of the bash script
+- `$1` to `$9`: the first 9 args to the Bash script
+- `$#`: Num of args supplied to the Bash script
+- `$@`: All the args supplied to the Bash script
+- `$?`: The exist status of the most recently run process. Non-zero means last one failed
+- `$$`: The process ID of the current script
+- `$USER`: The username of the user running the script
+- `$HOSTNAME`: The hostname of the machine the script os running on
+- `$SECONDS`: Num of secs since the script was started. 
+- `$RANDOM`: Returns a different random number each time it is referred to
+- `LINENO`: Returns the current line number in the Bash script
 
+```console
+free -m
+echo $?       # will return 0, meaning prv cmd was successful. 
+
+freeeeee -m
+echo $?       # will return 127, meaning prv cmd has failed
+
+free -mabcdefg 
+echo $?       # will return 1, meaning prv cmd has failed
+```
 
 ## Quotes
+You cannot refer to a variable's value using `$...` in single quotes. It will return the literal string you entered. So you need to use variable in double quotes, but put variable-like literal value after `\`, means to skip special character. 
 
+```console
+SKILL = "DevOps"
+echo $SKILL     # will print: DevOps
+
+SKILL = 'DevOps'
+echo $SKILL     # will print: DevOps
+
+echo "I have $SKILL skill."     # will print: I have DevOps skill.
+echo 'I have $SKILL skill.'     # will print: I have $SKILL skill.
+
+VIRUS = "covid19"
+echo "Due to $VIRUS, companies have lost $9 million."
+# will print: Due to covid19, companies have lost  million.
+# this is because $9 in here actually means the 9th argument
+
+echo 'Due to $VIRUS, companies have lost $9 million.'
+# will print: Due to $VIRUS, companies have lost $9 million.
+
+echo "Due to $VIRUS, companies have lost \$9 million."
+# will print: Due to covid19, companies have lost $9 million.
+```
 
 ## Command Substitution
 
