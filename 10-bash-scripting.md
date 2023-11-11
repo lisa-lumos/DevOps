@@ -338,8 +338,19 @@ echo "Due to $VIRUS, companies have lost \$9 million."
 ```
 
 ## Command Substitution
+Variables defined in the script live with it and die after the script completes. To define a variable accessible to all the scripts from the current shell, we need to export it. 
 
+```console
+# put a command into back ticks, or $(...), 
+# it will take the output of the command, and store it into a variable
+my_var1 = `ls` 
+my_var2 = $(ls)
 
+echo my_var1
+
+free_ram_size = `free -m | grep Mem | awk '{print $4}'`
+echo "Free RAM is $free_ram_size mb"
+```
 
 ## Exporting variables
 
