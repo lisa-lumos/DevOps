@@ -338,8 +338,7 @@ echo "Due to $VIRUS, companies have lost \$9 million."
 ```
 
 ## Command Substitution
-Variables defined in the script live with it and die after the script completes. To define a variable accessible to all the scripts from the current shell, we need to export it. 
-
+To store command output to a variable. 
 ```console
 # put a command into back ticks, or $(...), 
 # it will take the output of the command, and store it into a variable
@@ -353,8 +352,48 @@ echo "Free RAM is $free_ram_size mb"
 ```
 
 ## Exporting variables
+Variables defined in the script live with it and die after the script completes. To define a variable accessible to all the scripts from the current shell, make variables permanent for a user or every user in the system, we need to export it. 
 
+Variables are temporary in the process. When the process is dead, the variable goes with it.
 
+```console
+SEASON="Monsoon"
+echo $SEASON    # prints the value
+exit
+
+sudo -i
+echo $SEASON    # the value is gone
+```
+
+"testvars.sh":
+```sh
+#!/bin/bash
+
+echo "The $SEASON season is longer this time. "
+```
+
+In the command line:
+```console
+chmod +x testvars.sh
+SEASON ="Monsoon"
+echo $SEASON    # the value exists in the parent shell
+
+./testvars.sh   # but not in the child shell here
+# prints: The  season is longer this time. 
+
+export SEASON
+./testvars.sh   # The variable is now accessible from the child shell
+# prints: The Monsoon season is longer this time. 
+
+```
+
+Exporting the variable will make the variable global for all the other child shell. But this is still temporary. If we log out, it will be gone again. 
+
+To make this permanent for a user, need to add it to the ".bashrc", or ".profile", in that user's home dir. e.g., append `export SEASON="Monsoon"` to the ".bashrc" file, it will get executed when the user logs in (get sourced). 
+
+To make this permanent for every user globally, you need to append the export command for this var to "/etc/profile" file. 
+
+Note that ".bashrc" and ".profile" takes precedence over "/etc/profile" file, when var with same name is set to different values in these 2 files. Because ".bashrc" is more specific. 
 
 ## User Input
 
