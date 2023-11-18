@@ -396,11 +396,62 @@ To make this permanent for every user globally, you need to append the export co
 Note that ".bashrc" and ".profile" takes precedence over "/etc/profile" file, when var with same name is set to different values in these 2 files. Because ".bashrc" is more specific. 
 
 ## User Input
+```sh
+#!/bin/bash
+echo "Enter your skills:"
+read SKILL
 
+echo "Your $SKILL skill is in high demand in the industry. "
 
+read -p 'Username: ' USR
+read -sp 'Password: ' pass
+
+echo
+
+echo "Login Successful: Welcome USER $USER"
+```
+
+The `-p` flag means prompt, it will print the prompt and wait. The `-s` means suppress the input, so user cannot read it. 
+
+It is usually not recommended in devops to make the script interactive, because we run scripts from background, from other tools. Moreover, user interaction is always error prone. 
 
 ## Decision making
+The if-else statement example: 
+```bash
+#!/bin/bash
+read -p "Enter a number: " NUM
+echo
 
+if [ $NUM -gt 100 ]
+then
+    echo "We have entered the IF block"
+    sleep 3
+    echo "Your number is greater than 100"
+    echo
+    date
+else
+    echo "Your number not greater than 100"
+fi
+
+echo "Execution completed. "
+```
+
+The if-elif-else statement example: 
+```bash
+#!/bin/bash
+
+value = $(ip addr show | grep -v LOOPBACK | grep -ic mtu)
+
+if [ $value -eq 1]
+then 
+    echo "1 active network interface found. "
+elif [ $value -gt 1]
+then 
+    echo "Found multiple active network interfaces. "
+else
+    echo "No active network interface found. "
+fi
+```
 
 ## Monitoring script
 
