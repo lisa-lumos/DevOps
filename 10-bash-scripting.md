@@ -454,9 +454,37 @@ fi
 ```
 
 ## Monitoring script
+A script that detect whether a process is running, if it is not running, start the process. For example, `/var/run/httpd/httpd.pid` file will only exist when the httpd service is running. 
 
+"monitor.sh":
+```sh
+#!/bin/bash
+date
+ls /var/run/httpd/httpd.pid &> /dev/null
+
+if [ $? -eq 0] # if [ -f /var/run/httpd/httpd.pid ] does the same thing
+then
+    echo "httpd process is running."
+else
+    echo "httpd process is NOT running. "
+    echo "Starting the process... "
+    systemctl start httpd
+    if [ $? -eq 0 ]
+    then 
+        echo "Process started successfully. "
+    else
+        echo "Process starting failed, contact the admin. "
+    fi
+fi
+```
+
+It would be helpful to schedule it, like a monitoring tool. In cmd line, `crontab -e` to open scheduling file, and add `* * * * * /opt/scripts/monitor.sh &>> /var/log/monitor_httpd.log`. 
 
 ## loops
+
+
+
+
 
 
 ## While loops
