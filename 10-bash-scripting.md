@@ -519,9 +519,45 @@ done
 ```
 
 ## Remote command execution
+Execute command from script box to vms. 
+```console
+vagrant ssh web01
+sudo -i
+vi /etc/hostname      # append web01
+hostname web01
+logout
+logout
 
+# do the same for web02 and web03
+
+vagrant ssh scriptbox
+sudo -i
+vim /etc/hosts
+# append these to the file:
+# 192.168.10.13 web01
+# 192.168.10.14 web02
+# 192.168.10.15 web03
+ping web01
+ping web02
+ping web03
+ssh vagrant@web01     # password for vagrant user is vagrant. 
+hostname              # web01
+logout
+ssh vagrant@web01     # login to create devops user for each machine
+sudo -i
+useradd devops
+passwd devops         # set pwd for this user
+visudo                # add devops ALL=(ALL) NOPASSWD: ALL
+exit
+exit
+# here do the same for web02 and web03. skipped
+ssh devops@web01 uptime     # execute a command against web01, from scriptbox
+```
 
 ## SSH key exchange
+
+
+
 
 
 ## Finale
