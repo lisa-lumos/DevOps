@@ -480,15 +480,43 @@ fi
 
 It would be helpful to schedule it, like a monitoring tool. In cmd line, `crontab -e` to open scheduling file, and add `* * * * * /opt/scripts/monitor.sh &>> /var/log/monitor_httpd.log`. 
 
-## loops
+## for loops and while loops
+```sh
+#!/bin/bash
 
+for VAR1 in java .net python ruby php
+do 
+  echo "looping ..."
+  sleep 1
+  echo "Value of VAR1 is $VAR1"
+  date
+done
 
+myusers="a b c"
+for usr in $myusers
+do
+  echo "Adding user $usr ..."
+  user add $usr
+  id $usr
+done
 
+counter=0
+while [ $counter -lt 5 ]
+do
+  echo "looping ..."
+  echo "Value of counter is $counter. "
+  counter=$(( $counter + 1 ))
+done
 
-
-
-## While loops
-
+# infinite loop: 
+counter2=0
+while true
+do
+  echo "looping ..."
+  echo "Value of counter is $counter2. "
+  counter2=$(( $counter2 + 1 ))
+done
+```
 
 ## Remote command execution
 
