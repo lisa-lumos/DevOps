@@ -555,10 +555,21 @@ ssh devops@web01 uptime     # execute a command against web01, from scriptbox
 ```
 
 ## SSH key exchange
+kay-based pwd. The public key works like a lock, and the private key act like a  key for the lock. 
+```console
+ssh-keygen
+ssh-copy-id devops@web01    # take the lock and apply it to web01
+ssh-copy-id devops@web02
+ssh-copy-id devops@web03
 
+# this time it takes the key to login, and will not ask for password
+ssh devops@web01 uptime
 
+ls .ssh/          # it takes the id_rsa file as the default login key for ssh
 
-
+# equivalent to:
+ssh -i .ssh/id_rsa devops@web01 uptime
+```
 
 ## Finale
 
