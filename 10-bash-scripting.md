@@ -572,12 +572,139 @@ ssh -i .ssh/id_rsa devops@web01 uptime
 ```
 
 ## Finale
+```console
+cd /opt/scripts/
+mkdir remote_websetup
+cd remote_websetup
+vim remhosts
 
+# some remote execution examples:
+for host in `cat remhosts`; do echo $host; done     # print each row in the file
+for host in `cat remhosts`; do ssh devops@$host hostname; done    # login remotely
+for host in `cat remhosts`; do ssh devops@$host sudo yum install git -y; done # install git on each remote machine
 
+# set up script that adapts to diff OS
+vim websetup_multi_os.sh
+./websetup_multi_os.sh
 
+```
 
+"remhosts":
+```
+web01
+web02
+web03
+```
 
+"websetup_multi_os.sh", that works on different OS:
+```sh
+#!/bin/bash
 
+# Variable declaration
+# PACKAGE="httpd wget unzip"
+# SVC="httpd"
+URL="https://www.tooplate.com/zip-templates/2098_health.zip"
+ART_NAME="2098_health"
+TEMPDIR="/tmp/webfiles"
+
+yum --help &> /dev/null
+
+if [$? -eq 0 ]    # if prv cmd succeeded, then it is CentOS
+then
+  PACKAGE="httpd wget unzip"
+  SVC="httpd"
+
+  # Installing packages
+  echo "####################################"
+  echo "Installing packages"
+  echo "####################################"
+  sudo yum install $PACKAGE -y > /dev/null
+  echo
+
+  # Start & Enable HTTPD Service
+  echo "####################################"
+  echo "Start & Enable HTTPD Service"
+  echo "####################################"
+  sudo systemctl start $SVC
+  sudo systemctl enable $SVC
+  echo
+
+  # Starting Artifact Deployment
+  echo "####################################"
+  echo "Starting Artifact Deployment"
+  echo "####################################"
+  mkdir -p $TEMPDIR
+  cd $TEMPDIR
+  echo
+
+  wget $URL > /dev/null
+  unzip $ART_NAME.zip > /dev/null
+  sudo cp -r $ART_NAME/* /var/www/html/
+  echo 
+
+  echo "####################################"
+  echo "Restarting HTTPD service"
+  echo "####################################"
+  systemctl restart $SVC
+  echo
+
+  echo "####################################"
+  echo "Removing tmp files"
+  echo "####################################"
+  rm -rf $TEMPDIR
+  echo
+
+  sudo systemctl status $SVC
+  ls /var/www/html/
+else  # means it is Ubuntu
+  PACKAGE="apache2 wget unzip"
+  SVC="apache2"
+
+  # Installing packages
+  echo "####################################"
+  echo "Installing packages"
+  echo "####################################"
+  sudo apt update
+  sudo apt install $PACKAGE -y > /dev/null
+  echo
+
+  # Start & Enable HTTPD Service
+  echo "####################################"
+  echo "Start & Enable HTTPD Service"
+  echo "####################################"
+  sudo systemctl start $SVC
+  sudo systemctl enable $SVC
+  echo
+
+  # Starting Artifact Deployment
+  echo "####################################"
+  echo "Starting Artifact Deployment"
+  echo "####################################"
+  mkdir -p $TEMPDIR
+  cd $TEMPDIR
+  echo
+
+  wget $URL > /dev/null
+  unzip $ART_NAME.zip > /dev/null
+  sudo cp -r $ART_NAME/* /var/www/html/
+  echo 
+
+  echo "####################################"
+  echo "Restarting HTTPD service"
+  echo "####################################"
+  systemctl restart $SVC
+  echo
+
+  echo "####################################"
+  echo "Removing tmp files"
+  echo "####################################"
+  rm -rf $TEMPDIR
+  echo
+
+  sudo systemctl status $SVC
+  ls /var/www/html/
+fi
+```
 
 
 
