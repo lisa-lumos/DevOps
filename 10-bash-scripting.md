@@ -706,6 +706,45 @@ else  # means it is Ubuntu
 fi
 ```
 
+Need to use scp to push files to Linux machines. scp uses ssh, so if your ssh is working, your scp works. 
+
+Example to push a file:
+```console
+echo "testfile" > testfile.txt
+scp testfile.txt devops@web01:/tmp/
+```
+
+To continue the project:
+```console
+vim webdeploy.ssh
+chmod +x webdeploy.sh
+./webdeploy.sh
+
+# check the deployments, go to the ip from local browser
+cat /etc/hosts
+
+```
+
+"webdeploy.ssh":
+```sh
+#!/bin/bash
+
+USR = 'devops'
+
+for host in `cat remhosts`
+do 
+  echo "connecting to $host"
+  scp websetup_multi_os.sh $USR@$host:/tmp/
+  ssh $USR@$host sudo /tmp/websetup_multi_os.sh
+  ssh $USR@$host sudo rm -rf /tmp/websetup_multi_os.sh
+done
+```
+
+
+
+
+
+
 
 
 
