@@ -38,6 +38,52 @@ curl http://localhost
 ```
 Stop instance. 
 
+EC2 instance creation steps:
+1. Requirement gathering (os, storage, compute size, services/apps running, dev/QA/Staging/Prod env, login user/owner etc)
+2. key pairs (do it before you launch the instance)
+3. Security group
+4. Instance launch
+
+Below operations follows the steps above. 
+
+In the left pane:
+- Network & Security -> Key Pairs -> Create key pair -> Name: tween-dev-nvir (this is based on project name, env, region name), Private key file format: .pem -> Create key pair. This will download the private key to your local machine. 
+- Network & Security -> Security Groups -> Create security group -> Security group name: tween-web-dev-sg (this is based on project name, service name, env), Description: tween-web-dev-sg. Add inbound rules, such as all traffic from ipv4 and ipv6. You can search by protocol (from the Type field), such as ssh, if the protocol name is not in the drop down list, you can directly give a port number (for the Port range field). Can set Source as MyIP -> Create security group. 
+- Launch Instances -> Key: Name, Value: web01, Resource types: Instances, Volumes, Network interfaces -> Key: Project, value: tween -> Key: Environment, value: prod -> Key: Owner, value: LeadDevOps -> Key pair name: tween-dev-nvir -> Network settings, click Edit -> Firewall (security groups), Select existing security group -> Common security groups: tween-web-dev-sg -> Advance details, User data: (set scripts to run at launch) -> Summary pane -> Can set number of instances to launch, default to 1 -> Launch instance. 
+- Go to the instance -> Connect -> see the connection instructions. 
+- Open terminal on local machine, use the command in prv step to log in. Run below commands
+
+```console
+sudo apt update
+sudo apt install apache2 wget unzip -y
+wget https://tooplate.com/zip-templates/2128_tween_agency.zip
+unzip 2128_tween_agency.zip
+cp -r 2128_tween_agency/* /var/www/html/
+systemctl restart apache2
+```
+
+- We know this service open up on port 80. So go to the instance -> Security pane -> open its security group -> Edit inbound rules -> Add rule -> Type: Custom TCP, Port range: 80, Source: My IP -> Save rules
+- Now the website can be accessed via [vm_ip]:80. 
+
+A security group is a virtual firewall, that controls the traffic for one or more instances. You can add rules to each security group, that allow traffic to, or from, it associated instances. Security groups are "stateful" - if you are allowing port 22 to do a ssh to anyone, the same outbound rule will be automatically updated, so you do not need to mention it. 
+
+One key can be used for all the instances, or each instance can have their own keys. The best way is to divide your key, based on the environment. 
+
+When you tag your instances, you can search for it based on the tag, in the UI. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## AWS CLI
 
 
