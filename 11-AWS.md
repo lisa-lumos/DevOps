@@ -71,18 +71,21 @@ One key can be used for all the instances, or each instance can have their own k
 
 When you tag your instances, you can search for it based on the tag, in the UI. 
 
+By default, the public ip of the ec2 instance will change every time you power on/off, but private ip will be the same. 
 
+If you need a static public IP, 
+1. In the left pane, Network & Security -> Elastic IPs -> Allocate Elastic IP address -> Allocate. 
+2. Actions -> Associate Elastic IP address -> Instance: (choose the ec2 instance) -> Associate
 
+Benefits of elastic IP: you can recreate the instance, and attach the same elastic IP. To the user, the IP remains the same, even though server has changed to behind the scene. 
 
+When the instance gets created, along with it, a few other things gets created, such as the network interface, Volumes(virtual hard disks). The security group, the public IP are for the network interface, not for the instance. 
 
+EC2 Dashboard shows a list of resource types, and how many of each are there. 
 
+To change the size of instance: Actions -> Instance settings -> Change instance type.
 
-
-
-
-
-
-
+If you are building your own images, and for some reason, it doesn't come up. To trouble shoot: Actions -> Monitor and troubleshoot -> Get system log. 
 
 ## AWS CLI
 
