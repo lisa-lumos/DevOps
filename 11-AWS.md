@@ -88,7 +88,29 @@ To change the size of instance: Actions -> Instance settings -> Change instance 
 If you are building your own images, and for some reason, it doesn't come up. To trouble shoot: Actions -> Monitor and troubleshoot -> Get system log. 
 
 ## AWS CLI
+What we do through the GUI can also be done through the CLI. To use it, you need to install it on your local computer, using a command from PowerShell. Check the installation with `aws --version`. 
 
+To configure the CLI, you need an IAM User. In the GUI, IAM -> Users -> Add users -> User name: awscli -> Next -> Attach policies directly; Permissions policies: AdministratorAccess -> Next -> Create user. 
+
+Next, click on the user name -> Security credentials -> Create access key -> CLI -> Next -> Create access key -> Download .csv file
+
+Important: do not reveal your access key and secret access key to anybody else. 
+
+```console
+aws configure 
+# then enter the access key and secrete access key up on prompt
+# then default region, such as us-east-1
+# default output format: json
+# all the above info will be stored as ~/.aws/
+
+aws sts get-caller-identity
+
+aws ec2 describe-instances
+```
+
+If you think some keys are compromised, you don't wan to take any chance, so instead of deleting the user, you can also deactivate/delete those access keys. 
+
+Can find docs on all aws commands in their official docs. Can also ask Chat-GPT to generate commands, such as "aws command to create key pair, security group allows port 22 from my ip and launch ec2 instance with ami amazon linux in us-east-1". 
 
 ## EBS
 
