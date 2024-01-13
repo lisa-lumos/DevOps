@@ -112,8 +112,110 @@ If you think some keys are compromised, you don't wan to take any chance, so ins
 
 Can find docs on all aws commands in their official docs. Can also ask Chat-GPT to generate commands, such as "aws command to create key pair, security group allows port 22 from my ip and launch ec2 instance with ami amazon linux in us-east-1". 
 
-## EBS
+## EBS (Elastic Block Storage)
+The virtual hard disks for your EC2 instance. It provides both the virtual hard disk, and the snapshot (the backup of the EBS volume). 
 
+It is a block based storage, and runs EC2 OS, store data from db, file data, etc. 
+
+When you create an EBS volume, you need to specify an availability zone, and your instance should/must be in the same zone where you have the EBS volume. 
+
+EBS volume is automatically replicated within the availability zone, so you have protection at the data center level. But this is within the same availability zone, not in multiple availability zone. 
+
+EBS types:
+- General purpose (SSD): generally used for most of your workload.
+- Provisioned IOPS: higher input output per secs, suitable for large databases
+- Throughput optimized HD: For big data, data warehouses
+- Cold HDD: file servers. Low cost. 
+- Magnetic. For backups, archives. Low cost. 
+
+Launch instances -> Name: web01, Browse more AMIs, AWS Marketplace AMIs, search for CentOS, Select CentOS Stream 9 -> Continue -> Instance type: t2.micro, Key pair: web-dev-key, Select existing security group -> Configure storage: 10GB of gp2 (general purpose 2) -> Launch instance. 
+
+ssh to it from local machine by `ssh -i key-pair-path ec2-user@public-ip-address-of-vm`, then:
+```console
+sudo -i
+yum install httpd -y
+systemctl start httpd
+systemctl enable httpd
+cd /tmp
+wget https://tooplate.com/zip-templates/2128_tween_agency.zip
+unzip -o 2128_tween_agency.zip
+cp -r 2128_tween_agency/* /var/www/html/
+systemctl restart httpd
+
+systemctl status httpd
+ls /var/www/html/
+
+```
+
+Go to the instance in the GUI -> Storage tab -> Block devices section -> Can see Volume ID, Volume size -> Click on the Volume ID -> Can name the volume as "web01-ROOT-Volume". Always name your volumes, so it is easier to identify, especially if you have many instances. -> From the top pane, can see its availability zone, such as "us-east-1c". 
+
+Now, assume we need to add extra volume, e.g., we need 5GB for the server images. In the GUI, click Volumes in the left pane, Create Volume -> Volume Type: gp2, Size: 5GB, Availability Zone: us-east-1c (must be in the same AZ as the ec2 instance), Add Tag: key: Name, Value: gymso-web01-Images -> Create Volume.
+
+Actions -> Attach Volume -> Instance: (select the ec2 instance) -> Attach. 
+
+```console
+ssh -i key-pair-path ec2-user@public-ip-address-of-vm
+sudo -i
+cd /var/www/html/
+ls    # see the image folder, which will be put in the new separate storage
+
+fdisk -l      
+# list all your disks
+# you will see /dev/xvda, which is the root volume, who has a partition /dev/xvda1. 
+# you will also see /dev/xvdf, which is around 5GB of size, and it has no partition. We need to create a partition for it
+
+df -h
+# this will show /dev/xvda1 is mounted to root directory /
+
+fdisk /dev/xvdf
+# use m to see all the options, can see n is add a new partition, so hit n and enter
+# type p to create a primary partition, default to partition number 1, 
+# hit enter so it finds free sector for you
+# hit enter to set default last sector
+# hit p to print the partition info
+# hit w to write and save. 
+
+fdisk -l      
+# to see the new partition /dev/xvdf1
+
+mkfs.ext4 /dev/xvdf1    # format the partition to ext4 format
+
+# next step is to mount it, to images folder
+cd /var/www/html/
+ls images/    # see some data in there, so need to save it somewhere first
+mkdir /tmp/img-backups
+mv images/* /tmp/img-backups/
+
+ls images/    # should be empty now
+
+# this would do a temporary mount, which will be gone after a machine reboot
+mount /dev/xvdf1 /var/www/html/images/
+df -h         # can see it has been mounted there, and its size 
+# to unmount it:
+umount /var/www/html/images/
+
+# to do a permanent mount:
+vi /etc/fstab
+# append this to the end of file, and save
+# dev/xvdf1 /var/www/html/images ext4 defaults 0 0
+mount -a      # will mount all entries from prv file
+df -h         # can see it has been mounted there, and its size 
+
+mv /tmp/img-backups/* /var/www/html/images/
+
+systemctl restart httpd
+systemctl status httpd  # check the status, because sometimes it doesn't allow the mount
+
+ls /var/www/html/images/ # check if the files are there
+
+# if you do not see images in the website, could be SELinux is preventing it
+# disable it by:
+vi /etc/selinux/config
+# change SELINUX=enforcing to SELINUX=disabled
+# save the file
+# and reboot the machine, with 
+reboot
+```
 
 ## ELB
 
