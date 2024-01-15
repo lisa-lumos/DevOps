@@ -215,9 +215,87 @@ vi /etc/selinux/config
 # save the file
 # and reboot the machine, with 
 reboot
+
+# to unmount it, if not allowed, run lsof
+unmount /var/www/html/images
+```
+
+Once it is unmounted, in the GUI, Actions -> Detach Volume. Then Actions -> Delete Volume. 
+
+### EBS snapshot
+Assume you have a db installed, and you messed up and lost the data. If you already have a snapshot of it, you can recover the db from it. Steps:
+1. Unmount partition, so current data is preserved
+2. Detach volume
+3. Create new volume from snapshot
+4. Attach the new volume, that is created from snapshot. 
+5. Mount it back
+
+To walk this through, create a new volume, and use it as a database. Create Volume -> Volume type: gp2, Size: 5GB, Availability Zone: us-east-1c (must be in the same AZ as the ec2 instance), Add Tag: key: Name, Value: db01-volume -> Create Volume.
+
+Actions -> Attach Volume -> Instance: (select the ec2 instance) -> Attach. 
+
+```console
+fdisk -l      
+# list all your disks
+# see /dev/xvda, which is the root volume, who has a partition /dev/xvda1. 
+# you will also see /dev/xvdf, which is around 5GB of size, and it has no partition. We need to create a partition for it
+
+fdisk /dev/xvdf
+
+fdisk -l      
+# to see the new partition /dev/xvdf1
+
+mkfs.ext4 /dev/xvdf1    # format the partition to ext4 format
+
+mkdir -p /var/lib/mysql
+
+vi /etc/fstab
+# append this to the end of file, and save
+# dev/xvdf1 /var/lib/mysql ext4 defaults 0 0
+mount -a      # will mount all entries from prv file
+df -h         # can see it has been mounted there, and its size 
+
+cat /etc/os-release   # check linux version
+
+yum install mariadb-server -y
+
+systemctl start mariadb
+
+systemctl status mariadb
+
+ls /var/lib/mysql/      # can see the db data
+
+```
+
+To create a snapshot of the current block storage, Actions -> Create Snapshot -> Description: db volume snapshot, Key: Name, Value: db01-volume-db-SNAP -> Create Snapshot.
+
+Can check the status in Snapshots in the left pane. Wait until it changes from pending to completed. 
+
+```console
+ls /var/lib/mysql/      # can see the db data
+rm -rf *                # assume you deleted it by mistake
+ls
+
+systemctl stop mariadb  # need to first stop the service
+
+unmount /var/lib/mysql/
+fdisk -l
+```
+
+Detach the corrupted volume. Then, go to the snapshot, Actions -> Create Volume. 
+
+Go to Volumes, and should see this newly created volume. Actions -> Attach Volume. 
+
+```console
+df -h                 # might be automatically mounted
+
+mount -a
+
+ls /var/lib/mysql/    # see the data recovered to there
 ```
 
 ## ELB
+
 
 
 ## Cloud watch
