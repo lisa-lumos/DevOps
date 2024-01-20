@@ -294,8 +294,19 @@ mount -a
 ls /var/lib/mysql/    # see the data recovered to there
 ```
 
-## ELB
+## ELB (Elastic Load Balancer)
+When you build a cluster of web services, with multiple servers, you will need a single endpoint to access them, which is usually provided through a load balancer. It is the AWS equivalent of Nginx, HAproxy, etc. 
 
+Load balancer ports:
+- Frontend port: Listens from the user requests on this port. e.g.: 80, 443, 25, ...
+- Backend ports: Services running on OS listening on this port. e.g.: 80, 443, 8080 etc. For example, if you have a Tomcat server running on port 8080, then the load balancer backend port will be 8080. 
+
+The load balancer receives the incoming application/network traffic, and distributes them on the back end to multiple targets, such as EC2 instances, containers, IP addresses, in multiple availability zones. 
+
+3 Types of ELBs in AWS:
+1. Classic load balancer. Simplest. Works at the network level in the OSI. Nowadays not used often. 
+2. Application load balancer. Only for web traffic. Fits in the OSI layer 7. Routes traffic based on advanced application level info, that includes the content of the request, such as the route/path. 
+3. Network load balancer. High performance, expensive. Fits in the OSI layer 4. Can handle millions of requests per second. Can have an elastic IP attached to it, so it got a static IP. 
 
 
 ## Cloud watch
