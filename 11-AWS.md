@@ -308,6 +308,25 @@ The load balancer receives the incoming application/network traffic, and distrib
 2. Application load balancer. Only for web traffic. Fits in the OSI layer 7. Routes traffic based on advanced application level info, that includes the content of the request, such as the route/path. 
 3. Network load balancer. High performance, expensive. Fits in the OSI layer 4. Can handle millions of requests per second. Can have an elastic IP attached to it, so it got a static IP. 
 
+### Example to use ELB
+Create a EC2 instance, and get a website running. Create an AMI (which contains the snapshot and the metadata) from this instance, and launch 1 more instance from it. 
+
+When launching instances from AMI, you can create a template to save all the options in there, so you can quickly launch instance in seconds, which is called "Launch Template". Create launch template -> (make sure to select your AMI in there) -> Select the instance type of t2.micro -> select the key-pair for it -> Select security group -> Add tags -> Create launch template. 
+
+To use this template, select it -> Actions -> Launch instance from template -> can see all the config in the template is already filled up for you, and you can still make changes for them, such as changing tag value from web00 to web02 -> Launch instance. 
+
+In the left pane, Load Balancing -> Target Groups. It is a group of instances, with health checks. Create target group -> Target type: Instances, Target group name: tg-health, Protocol: HTTP. Port: 80. Advanced health check settings: Health check protocol: HTTP. Health check path: / (this is similar to the route after domain name). Port: Traffic port. ..., Success codes: 200. -> Next -> Register targets: select the two instances. Include as pending below (to check the ports, etc of both of the instances) -> Create target group. 
+
+Load Balancers in the left pane. 
+
+
+
+Notes: 
+- From a snapshot, you can create a volume, but from an AMI, you can create an instance. 
+- You can copy an AMI to a different region. Which can be used for moving your EC2 instance from one region to another. 
+- You can make you AMI public, or share with other accounts you specify, so other people can have access to it.
+- You can create a pipeline to build images automatically, this service in AWS is called "EC2 Image Builder". 
+- Target group can check the health of the instance, 
 
 ## Cloud watch
 
