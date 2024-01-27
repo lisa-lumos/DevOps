@@ -317,9 +317,11 @@ To use this template, select it -> Actions -> Launch instance from template -> c
 
 In the left pane, Load Balancing -> Target Groups. It is a group of instances, with health checks. Create target group -> Target type: Instances, Target group name: tg-health, Protocol: HTTP. Port: 80. Advanced health check settings: Health check protocol: HTTP. Health check path: / (this is similar to the route after domain name). Port: Traffic port. ..., Success codes: 200. -> Next -> Register targets: select the two instances. Include as pending below (to check the ports, etc of both of the instances) -> Create target group. 
 
-Load Balancers in the left pane. 
+Load Balancers in the left pane. Create Load Balancer -> (Under Application Load Balancer), click Create -> Load balancer name: health-elb. Scheme: Internet-facing. Network mapping: (select at least 2 availability zones, even all the zones, to make sure the load balancer is highly available). Security groups: (Create new security group. Security group name: health-elb-sg. Allow inbound traffic at port 80 from anywhere, both IPv4 and IPv6. Remove the default sg). Listeners and routing: Set default action as Forward to health-tg target group -> Create load balancer -> View load balancer. 
 
+Wait until it is in Active state. In the Description pane, under Basic Configuration, there is "DNS name", if you take this url and paste it to the browser, it should show the website from the instances. If you get a 504 error, check the security group of the EC2 instances. Also, it is very likely that the target group health status shows unhealthy, because it cannot access the EC2s. Check their inbound rules, add one more rule, Type: Custom TCP, Port: 80, Source: health-elb-sg (the security group of the load balancer), Description: Allow port 80 from ELB. Next, check if the target groups are healthy. Then you should be able to access the website from the elb url. 
 
+In the target group, you can add/remove instances. When you de-register(remove) an instance, e.g., when you need to do maintenance on the instance,it will drain the request first, so no traffic comes to it. 
 
 Notes: 
 - From a snapshot, you can create a volume, but from an AMI, you can create an instance. 
@@ -327,6 +329,9 @@ Notes:
 - You can make you AMI public, or share with other accounts you specify, so other people can have access to it.
 - You can create a pipeline to build images automatically, this service in AWS is called "EC2 Image Builder". 
 - Target group can check the health of the instance, 
+- Nowadays many internet service providers are giving IPv6, especially mobile internets. 
+
+The project cleanup: delete the load balancer, then the target group, then delete the instances. Recommend to keep this AMI for quick instance launching for later projects. 
 
 ## Cloud watch
 
