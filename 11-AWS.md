@@ -334,6 +334,22 @@ Notes:
 The project cleanup: delete the load balancer, then the target group, then delete the instances. Recommend to keep this AMI for quick instance launching for later projects. 
 
 ## Cloud watch
+A monitoring service, but has expanded beyond it. 
+
+For every service, Cloud Watch provides some standard metrics, so you do not need to set up the monitoring. If needed, you can add more metrics of your choice (custom metrics). 
+
+On top of these metrics, you can set alarms notifications. Alarms can be integrated with SNS service to send email notification. 
+
+For example, in the UI of a EC2 instances, you can see a Monitoring tab, where there are some metrics, such as CPU utilization, Network in/out, ... - these metrics are coming from cloud watch. If you go to the Volumes section in the left pane, under the monitoring tab, you can see r/w bandwidth, r/w throughput, ...
+
+Apart from metrics, it also has events. AWS events gives you a real time stream of any events that is happening, such as changes in AWS resources. You can set triggers from these events, mostly used to integrate with lambda functions. 
+
+Logs. You can user Amazon Cloud Watch logs to monitor/store/access log files from EC2 instances, AWS CloudTrial, Route 53, etc. You can also set metrics on logs, then SNS email notifications on top of the metrics. 
+
+
+
+
+
 
 
 ## EFS
