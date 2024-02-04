@@ -346,6 +346,26 @@ Apart from metrics, it also has events. AWS events gives you a real time stream 
 
 Logs. You can user Amazon Cloud Watch logs to monitor/store/access log files from EC2 instances, AWS CloudTrial, Route 53, etc. You can also set metrics on logs, then SNS email notifications on top of the metrics. 
 
+### Hands-on
+Navigate to the Health-AMI's launch template -> Actions -> Launch instance from template -> Launch Instance. 
+
+Wait until the instance is up and running, wait for ~5min, go to the Monitoring tab, can see the graphs from metrics from Cloud Watch service. To have other metrics, such as disk utilization or RAM utilization, you need to create your own custom metrics. 
+
+By default, Cloud Watch will check these metrics every 5 min by default. To reduce this interval to every 1 min, you need to enable "detailed monitoring", and it is not free. To do this, click on "Manage detailed monitoring" -> Enable -> Save. 
+
+To test it, log in to this instance, and stress test the CPU. 
+```console
+sudo amazon-linux-extras install epel -y
+sudo yum install stress -y
+
+# stress the CPU with 4 processes, for 300 secs, and let it run in the background
+nohup stress -c 4 -t 300 &
+
+# see the 4 stress processes
+top 
+```
+
+Go to CloudWatch service, to set up an alarm for CPU utilization for the instance. All alarms (in the left pane) -> Create alarm -> Select metric -> EC2 -> Per-Instance Metrics -> Metric name: CPUUtilization -> Select metric -> Period: 5 min. Greater/Equal than: 50 (means if the CPU utilization is greater than 50% for 5 min, then alarm) -> Alarm state trigger: In alarm -> Select an SNS topic
 
 
 
