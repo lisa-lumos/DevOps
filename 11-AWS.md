@@ -365,12 +365,7 @@ nohup stress -c 4 -t 300 &
 top 
 ```
 
-Go to CloudWatch service, to set up an alarm for CPU utilization for the instance. All alarms (in the left pane) -> Create alarm -> Select metric -> EC2 -> Per-Instance Metrics -> Metric name: CPUUtilization -> Select metric -> Period: 5 min. Greater/Equal than: 50 (means if the CPU utilization is greater than 50% for 5 min, then alarm) -> Alarm state trigger: In alarm -> Select an SNS topic
-
-
-
-
-
+Go to CloudWatch service, to set up an alarm for CPU utilization for the instance. All alarms (in the left pane) -> Create alarm -> Select metric -> EC2 -> Per-Instance Metrics -> Metric name: CPUUtilization -> Select metric -> Period: 5 min. Greater/Equal than: 50 (means if the CPU utilization is greater than 50% for 5 min, then alarm) -> Alarm state trigger: In alarm -> Select an SNS topic, Create new topic , give a name, provide your email address -> Create topic. (you can also configure an EC2 actions, such as stop/terminate/reboot the instance, etc) -> Next -> Alarm name: Warning | High CPU web01 Health project -> Next -> Create alarm. 
 
 ## EFS
 
