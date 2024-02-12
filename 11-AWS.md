@@ -368,6 +368,44 @@ top
 Go to CloudWatch service, to set up an alarm for CPU utilization for the instance. All alarms (in the left pane) -> Create alarm -> Select metric -> EC2 -> Per-Instance Metrics -> Metric name: CPUUtilization -> Select metric -> Period: 5 min. Greater/Equal than: 50 (means if the CPU utilization is greater than 50% for 5 min, then alarm) -> Alarm state trigger: In alarm -> Select an SNS topic, Create new topic , give a name, provide your email address -> Create topic. (you can also configure an EC2 actions, such as stop/terminate/reboot the instance, etc) -> Next -> Alarm name: Warning | High CPU web01 Health project -> Next -> Create alarm. 
 
 ## EFS
+Can be used for shared storage on AWS. Can be mounted on any directory in your OS. 
+
+If you have a cluster of servers, and they want to store data at on centralized place, you can go with EFS, like like mounting an SBS partition. The difference is, EBS is only for one instance at a time, but EFS can be mounted for multiple instances (shared file system). 
+
+### Hands-on
+Has an EC2 instance that hosts a static website, use EFS to store all the images of this web service. 
+
+When you have a cluster of EC2 instances, they will all store images in the same directory, so the images data will be in sync on all the servers in the cluster. 
+
+Log into the EC2 instance:
+```
+sudo -i
+
+cd /var/www/html/
+
+ls img/
+
+```
+
+Go go the EFS service in the AWS website. EFS lives inside a security group. 
+
+Create a security group "eft-website-img", with inbound rule of NFS Type, with it source as the security group of the web server. 
+
+Go back to EFS page. Create file system -> Name: website-img -> Customize -> Next -> Change its security group to what was just created, for all the available availability zones -> Next -> ... -> Create. 
+
+Go the the Access points in the left pane -> Create access point -> File system: the EFS that was just created -> Create access point. 
+
+To mount it, need to install the amazon-efs-utils package, if it is amazon linux, just do `sudo yum install -y amazon-efs-utils`, for other linux versions, need to install git, clone the source code, and install it. 
+
+
+
+
+
+
+
+
+
+
 
 
 ## S3
