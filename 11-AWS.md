@@ -397,15 +397,42 @@ Go the the Access points in the left pane -> Create access point -> File system:
 
 To mount it, need to install the amazon-efs-utils package, if it is amazon linux, just do `sudo yum install -y amazon-efs-utils`, for other linux versions, need to install git, clone the source code, and install it. 
 
+The command to mount the efs: 
+```console
+# the syntax is like below:
+file-system-id efs-mount-point efs _netdev,tls,accesspoint=access-point-id 0 0
 
+# replace with the real values, for example: 
+fs-abcd1234 /var/www/html/img efs _netdev,tls,accesspoint=fsap-123abc456def 0 0
+```
 
+The file system id is in the file systems page of the efs. The access point id is in the access points tab in the EFS page. 
 
+Back to the EC2:
+```console
+# take a backup of the img dir
+mkdir /tmp/img-backup
+mv img/* /tmp/img-backup/
+ls img/    # should show nothing
 
+vi /etc/fstab
+# then append the mounting command to the end of this file
 
+mount  -fav
+# should see successfully mounted
 
+mv /tmp/img-backup/* img/
 
+ls img/
+# should show all the img files
 
+df -h    # show the path is mounted to efs
 
+```
+
+Recommend to create AMI for this instance, will be used later. 
+
+# Autoscaling Group
 
 
 ## S3
