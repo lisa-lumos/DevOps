@@ -432,10 +432,32 @@ df -h    # show the path is mounted to efs
 
 Recommend to create AMI for this instance, will be used later. 
 
-# Autoscaling Group
+## Autoscaling Group
+Auto scaling groups integrates with Cloud watch, and it monitors your resources on a particular metric, for example, if the CPU utilization is going high, crossing the threshold, it can adjust the capacity, by adding more instances in your auto scaling group. It can also remove the capacity. This is based on the Cloud watch alarms. 
+
+Auto scaling group uses launch templates, the same ones for the EC2. 
+
+To adjust the capacity based on the alarm, it uses scaling policies. 
+
+When you create auto scaling group, you can set the minimum/desired/maximum capacity of it. Auto scaling group can terminate instances based on it scaling policy, but it cannot terminate if the size is already the pre-set minimum. And vise versa for the maximum size (capacity). 
+
+### hands on
+
+
+
+
+
+
+
+
+
 
 
 ## S3
+
+
+
+
 
 
 ## RDS
