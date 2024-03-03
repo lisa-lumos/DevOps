@@ -442,13 +442,13 @@ To adjust the capacity based on the alarm, it uses scaling policies.
 When you create auto scaling group, you can set the minimum/desired/maximum capacity of it. Auto scaling group can terminate instances based on it scaling policy, but it cannot terminate if the size is already the pre-set minimum. And vise versa for the maximum size (capacity). 
 
 ### hands on
+In the EC2 page, go to Target Groups in the left pane -> Create target group -> ... give it a name of health-tg, with no instances inside -> Create. 
 
+Auto scaling group will add instances into this target group automatically. 
 
+In the EC2 page, go to Load Balancers in the left pane -> Create Load Balancer -> Under Application Load Balancer, click Create -> Name: health-elb, select all the zones, Security groups: health-elb-sg, Listener default action: health-tg -> Create load balancer. 
 
-
-
-
-
+In the EC2 auto scaling group page -> Create Auto Scaling group -> Name: health-asg, Launch template: health-template (you can have multiple versions of launch templates, it is why AWS recommend this way) -> Next -> Availability Zones and subnets: (pick all the zones) -> Next -> Load balancing: Attach to an existing load balancer; target groups: health-tg; Health checks: ELB (if target group declares an instance as unhealthy, then auto scaling group will delete that unhealthy instance, and launch a new one) -> Next ->  Desired capacity: 2; Minimum capacity: 1; Maximum capacity: 4; Scaling policies: Target tracking scaling policy; Metric type: Average CPU utilization; Target value: 50; (no need to disable scale in, because data is stored in share EFS in this case, instead of inside individual instances) -> Next -> Add notifications: SNS topic sent to your email address, listen to events including Launch, Terminate, Fail to launch, Fail to terminate, etc -> Next -> Add tags: 
 
 
 
