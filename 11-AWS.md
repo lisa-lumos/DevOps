@@ -456,8 +456,31 @@ You can also see these 2 instances in the target group.
 
 Note that because instances got create and deleted automatically in the auto scaling group, you should not login and make changes, because all your changes will be only temporary. So, any changes you need to make, should be at the AMI launch template. This can be done in the Details pane of the auto scaling group. Next, to apply the new template to the instance, need to go to the Instance refresh pane, and Start instance refresh. Here you can config the Minimum healthy percentage of instances so your service has no downtime, make sure you have a higher percentage selected there, so users will not feel affected. 
 
-## S3
+After this, you can delete the auto scaling group and the load balancer. 
 
+## S3
+Simple Storage Service. Object storage. The data is replicated across multiple AZ (3+, happens automatically). Bucket name need to be unique across the internet. 
+
+You can set permission at both bucket level and object level. 
+
+Common use case: two instances running some service (web/application service), they want to store file-based data. Unlike the EFS which is mounted at the operating system level, S3 will be programmatically accessed through the application. You can also mount S3 bucket through the S3FS driver. 
+
+S3 storage classes (per file per bucket):
+- S3 Standard: General purpose storage of frequently accessed data. Fast access, object replication in multi AZ.
+- S3 IA - Infrequent Access: Long lived, but less frequently accessed data. Slow access, object replication in multi AZ. 
+- S3 One Zone IA: For data that is accessed less frequently. Slow access, no object replication. 
+- S3 Intelligent Tiering: Automatically moves data to the most cost effective tier. 
+- S3 Glacier: Low cost storage class, for data archiving. 
+- S3 Glacier Deep Archive: lowest cost storage, retrieval time is 12 hrs. 
+
+You can also set lifecycle policies that moves files across tiers based on its age. 
+
+S3 charges:
+- Storage
+- Requests
+- Tiers
+- Data transfer
+- Region Replication
 
 
 
