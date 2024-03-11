@@ -482,9 +482,15 @@ S3 charges:
 - Data transfer
 - Region Replication
 
+You cannot make an object public, if it is in a private access bucket. 
 
+You can also host a static website on S3. To do this, make sure the html file is at root level of the bucket, and make every related file (such as js, css files) public. Also, under the Properties pane for the bucket, under "Static website hosting", set it to enabled, and set "Use the bucket endpoint as the web address", specify the index document (usually index.html). 
 
+When you have versioning enabled for the bucket, you can restore overwritten files by clicking on that file, and go to Versions pane. You can also delete past versions to save cost. 
 
+Under Management tab in the S3 bucket, you can manage "Lifecycle rules". 
+
+Under the same tab, you can manage "Replication rules", to replicate the data from one S3 bucket to the other S3 bucket, for disaster recovery. Note that existing data will not get replicated, only new data will get replicated. 
 
 ## RDS
 
