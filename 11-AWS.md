@@ -493,6 +493,36 @@ Under Management tab in the S3 bucket, you can manage "Lifecycle rules".
 Under the same tab, you can manage "Replication rules", to replicate the data from one S3 bucket to the other S3 bucket, for disaster recovery. Note that existing data will not get replicated, only new data will get replicated. 
 
 ## RDS
+DB administration includes installation/patching/monitoring/performance-tuning/backups/scaling/security/hardware-upgrades/storage-management, etc. 
+
+The AWS RDS service will do most of it automatically for you. 
+
+It is a distributed relational database service. High availability in multi-AZ deployments (primary and secondary databases). There are Read Replicas to improve the performance. Effortless scaling. 
+
+When the secondary becomes primary, it will start to take write requests. But read replica will only be continuously syncing with the primary db. 
+
+A developer can specify that the read request goes to the read replica, instead of going to the main primary database. This improves the performance, because for most of the applications, most of the requests on the db are be read requests. 
+
+A common use case of RDS: RDS db instance and EC2 instance (web application) live inside a single VPC, and the EC2 connects with the internet using Internet Gateway. So outside traffic will reach the EC2, and EC2 accesses the RDS privately. 
+
+### Hands on
+Go to RDS page -> Create database -> database creation method: Standard create; Engine type: MySQL; Edition: MySQL 5.7.22; Templates: Dev/Test; DB instance identifier: vprofile-mysql-rds; Credentials - Master username: admin; check "Auto generate a password"; DB instance class: Burstable classes, db.t3.micro; Storage - Storage type: General Purpose (SSD); Allocated storage: 20 GB; check "Enable storage autoscaling"; Multi-AZ deployment: Create a standby instance; Public access: No; VPC security group - Create new; New VPC security group name: vprofile-rds-sg; Database port: 3306; Database authentication options: Password authentication; Additional configuration - Database options; Initial database name: accounts; Check "Enable automatic backups"; Backup retention period: 7 days; Backup window: No preference; check "Enable replication in another AWS region"; Destination region: ...; check "Enable encryption"; check "Enable Enhanced monitoring", to see how different processes/threads uses the CPU; Log exports, check all logs (to stream the logs to Cloud Watch); check "Enable auto minor version upgrade" for auto patching upgrade; Maintenance window: (specify when you want change to be applied); check "Enable deletion protection", so it won't be deleted accidentally; Read "Estimated monthly costs", based on your choices -> Create database. 
+
+Click "View credential details" to save the auto-generated pwd. 
+
+After the instance is created, at its Connectivity & security tab, you can get is "Endpoint" to access your RDS instance. But since its Public accessibility is set to No, so we cannot access it from the local machine. But we can access it from a EC2 instance from the same region same VPC, in the same network. 
+
+
+
+
+Notes: 
+RDS backups are snapshots, like the EBS snapshot, and a new EBS volume can be created from the EBS snapshot, a new RDS can be created from its snapshot for recovery purposes. 
+
+
+
+
+
+
 
 
 
