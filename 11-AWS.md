@@ -512,28 +512,25 @@ Click "View credential details" to save the auto-generated pwd.
 
 After the instance is created, at its Connectivity & security tab, you can get is "Endpoint" to access your RDS instance. But since its Public accessibility is set to No, so we cannot access it from the local machine. But we can access it from a EC2 instance from the same region same VPC, in the same network. 
 
+Go to EC2, Launch instances -> Select Ubuntu 18 -> t2.macro -> Next: Configure Instance Details -> Security group name: mysql-client-sg; Source: My IP -> Review and Launch -> create and download Kay Pair -> Launch Instances. 
 
+Go to the security group of the RDS -> Inbound Rules -> set it to allow from the EC2 instance security group mysql-client-sg. Or, you can se to allow from the EC2 instance IP, by IP address. -> Save rules. 
 
+Login to this EC2 instance:
+```console
+sudo -i
+apt update
+apt install mysql-client -y
+telnet [mysql-endpoint-name] 3306
+mysql -h [mysql-endpoint-name] -u admin -p
+
+show databases;
+
+```
 
 Notes: 
 RDS backups are snapshots, like the EBS snapshot, and a new EBS volume can be created from the EBS snapshot, a new RDS can be created from its snapshot for recovery purposes. 
 
+In the RDS page, under "Actions", you can stop/delete/snapshot/create-read-replica/restore-from-snapshot the instance. Under "Modify", you can tune the settings. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+In the "Parameter groups" in the left pane, you can modify db parameters. 
