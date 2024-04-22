@@ -9,6 +9,22 @@ The EC2 instances will use the auto scaling service, to automatically scale in a
 For storage, will use S3 or EFS; and Route 53 for private DNS service. 
 
 ## Security Group & Keypairs
+EC2 -> create security group -> Security group name: vprofile-ELB-SG; Description: Security group for vprofile prod Load Balancer; Add inbound rules, Type: HTTP, Source: Anywhere; Add rule, Type: HTTPS, Source: Anywhere -> Create security group. 
+
+Next, create security group for the Tomcat instance. Security group name: vprofile-app-sg; Description: Security group for tomcat instances; Inbound rule: Type: Custom TCP; Port range: 8080; Source: Custom, vprofile-ELB-SG; Description: Allow traffic from Vprofile prod ELB -> Create security group. 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## EC2 Instances
