@@ -13,11 +13,11 @@ EC2 -> create security group -> Security group name: vprofile-ELB-SG; Descriptio
 
 Next, create security group for the Tomcat instance. Security group name: vprofile-app-sg; Description: Security group for tomcat instances; Inbound rule: Type: Custom TCP; Port range: 8080; Source: Custom, vprofile-ELB-SG; Description: Allow traffic from Vprofile prod ELB -> Create security group. 
 
+Next, create security group for the backend services, including RabbitMQ, memcache and MySQL. Security group name: vprofile-backend-sg; Description: Security Group for VProfile Backend Services; Add rule -> Inbound rules, Type: MYSQL/Aurora, Source: Custom, vprofile-app-sg, Description: Allow 3306 from application servers; Add rule -> Inbound rules, Type: Custom TCP, Port range: 11211, Source: Custom, vprofile-app-sg, Description: Allow tomcat to connect memcache; Add rule -> Inbound rules, Type: Custom TCP, Port range: 5672, Source: Custom, vprofile-app-sg, Description: Allow tomcat to connect RabbitMQ; Add rule -> Inbound rules, Type: All traffic, Source: Custom, vprofile-backend-sg (itself), Description: Allow internal traffic to flow on all ports.  
 
+Also add your own IP into inbound rules into both vprofile-app-sg, and vprofile-backend-sg, for ssh access. (port range of 22, from My IP; 8080 from My IP to access the app server from the browser)
 
-
-
-
+Next, create Key Pairs. In the EC2 page, Key Pairs in the left pane, Create key pair -> Name: vprofile-prod-key; File format: pem (for git bash login); 
 
 
 
