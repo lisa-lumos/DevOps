@@ -19,15 +19,16 @@ Also add your own IP into inbound rules into both vprofile-app-sg, and vprofile-
 
 Next, create Key Pairs. In the EC2 page, Key Pairs in the left pane, Create key pair -> Name: vprofile-prod-key; File format: pem (for git bash login); 
 
-
-
-
-
-
-
-
-
 ## EC2 Instances
+
+
+
+
+
+
+
+
+
 
 
 ## Build and Deploy Artifacts
